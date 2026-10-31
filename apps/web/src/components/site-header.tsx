@@ -17,6 +17,9 @@ export function SiteHeader() {
         </Link>
         <nav className="flex items-center gap-3">
           <LocaleSwitcher />
+          <Link href="/explore" className="text-sm text-zinc-300 hover:text-zinc-100">
+            {t('explore')}
+          </Link>
           <HeaderActions />
         </nav>
       </div>

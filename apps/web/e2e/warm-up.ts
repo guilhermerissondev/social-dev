@@ -17,6 +17,7 @@ const routes = [
   '/reset-password',
   '/welcome',
   '/home',
+  '/explore',
   '/saved',
   '/notifications',
   '/settings/profile',

@@ -395,6 +395,12 @@ Um PR por etapa. As notificações vêm cedo para que cada etapa seguinte já tr
 
 Ficou para depois: notificações em tempo real e resumo por e-mail, agrupar repostagens repetidas no feed, autocompletar `@usuario` no editor, paginação de conversas muito longas.
 
-### 10.5 Próximo: M4 (descoberta)
+### 10.5 M4: descoberta (em andamento)
 
-Onboarding por stack, sugestões de quem seguir, importação do GitHub, Explorar, busca e diretório.
+Um PR por etapa:
+
+1. [x] **Explorar:** posts populares do dia, da semana ou do mês (curtidas + respostas + repostagens em dobro, porque levam o post a gente nova), tags em alta e filtro por tag. Aberto a visitantes, com link no cabeçalho e no feed vazio. A pontuação é calculada na leitura; guardar pronta fica para quando o volume pedir.
+2. [ ] **Busca:** pessoas, posts e tags, com a busca de texto do PostgreSQL em português.
+3. [ ] **Perfil ampliado e diretório:** área (front, back, dados, mobile...) e senioridade no perfil; diretório com filtros por tecnologia, área, senioridade e local ("devs de Rust em Curitiba").
+4. [ ] **Onboarding e sugestões de quem seguir:** depois do cadastro, escolher stack, área e tags de interesse e receber sugestões, para o feed nunca começar vazio.
+5. [ ] **GitHub:** sugerir quem a pessoa já segue no GitHub e está na Social Dev, e mostrar repositórios fixados no perfil.

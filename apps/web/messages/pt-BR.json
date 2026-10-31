@@ -13,7 +13,8 @@
     "feed": "Início",
     "saved": "Salvos",
     "notifications": "Notificações",
-    "notificationsUnread": "Notificações ({count, plural, one {# não lida} other {# não lidas}})"
+    "notificationsUnread": "Notificações ({count, plural, one {# não lida} other {# não lidas}})",
+    "explore": "Explorar"
   },
   "Home": {
     "title": "A rede social de quem desenvolve software.",
@@ -107,7 +108,7 @@
   "Feed": {
     "title": "Olá, {name}!",
     "following": "Seguindo",
-    "empty": "Seu feed está vazio. Siga pessoas e tags (abra uma #tag em qualquer post) e os posts delas aparecem aqui."
+    "empty": "Seu feed está vazio. Siga pessoas e tags, ou comece pelo <explore>Explorar</explore>, e os posts aparecem aqui."
   },
   "Profile": {
     "edit": "Editar perfil",
@@ -229,5 +230,20 @@
   "Thread": {
     "reply": "Responder",
     "replyTo": "Responder a @{username}"
+  },
+  "Explore": {
+    "title": "Explorar",
+    "subtitle": "Os posts que mais movimentaram a Social Dev.",
+    "periods": {
+      "day": "Hoje",
+      "week": "Esta semana",
+      "month": "Este mês"
+    },
+    "periodLabel": "Período",
+    "trending": "Tags em alta",
+    "filteringBy": "Filtrando por <tag></tag>",
+    "clearFilter": "Ver todas",
+    "empty": "Nenhum post neste período ainda.",
+    "more": "Ver mais"
   }
 }

@@ -447,7 +447,7 @@ export async function listPosts(
 }
 
 /** Loads the posts and reposters behind a page of entries, keeping the entries' order. */
-async function toEntries(
+export async function toEntries(
   db: Database,
   entries: { entry_id: string; post_id: string; reposter_id: string | null }[],
   viewerId: string | null,

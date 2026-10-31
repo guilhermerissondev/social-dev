@@ -1,4 +1,5 @@
 import { useTranslations } from 'next-intl';
+import type { ReactNode } from 'react';
 
 import type { PostPage } from '@/lib/posts.ts';
 
@@ -10,11 +11,14 @@ export function PostList({
   olderHref,
   empty,
   fallbackHref,
+  moreLabel,
 }: {
   page: PostPage;
   olderHref: (cursor: string) => string;
-  empty: string;
+  empty: ReactNode;
   fallbackHref: '/login' | '/welcome' | null;
+  /** Text of the link to the next page. Defaults to "older posts". */
+  moreLabel?: string;
 }) {
   const t = useTranslations('Post');
 
@@ -36,7 +40,7 @@ export function PostList({
         <div className="py-6 text-center">
           {/* A plain link keeps paging working without JavaScript and crawlable. */}
           <a href={olderHref(page.nextCursor)} className="text-sm text-emerald-400 hover:underline">
-            {t('older')}
+            {moreLabel ?? t('older')}
           </a>
         </div>
       )}

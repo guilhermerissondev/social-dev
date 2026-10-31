@@ -312,6 +312,9 @@ importers:
 
   packages/db:
     dependencies:
+      '@social-dev/shared':
+        specifier: workspace:*
+        version: link:../shared
       drizzle-orm:
         specifier: ^0.45.4
         version: 0.45.4(kysely@0.29.7)(postgres@3.4.9)

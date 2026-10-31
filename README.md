@@ -20,14 +20,14 @@ you sign up, pick your stack and immediately find people and content that matter
 
 ## Status
 
-| Milestone                    | Status     |
-| ---------------------------- | ---------- |
-| M0. Discovery and planning   | ✅ Done    |
-| M1. Foundation (auth, CI)    | ✅ Done    |
-| M2. Core social features     | ✅ Done    |
-| M3. Interactions             | ✅ Done    |
-| M4. Discovery                | ⏳ Next    |
-| M5. Federation (ActivityPub) | 📋 Planned |
+| Milestone                    | Status  |
+| ---------------------------- | ------- |
+| M0. Discovery and planning   | ✅ Done |
+| M1. Foundation (auth, CI)    | ✅ Done |
+| M2. Core social features     | ✅ Done |
+| M3. Interactions             | ✅ Done |
+| M4. Discovery                | ✅ Done |
+| M5. Federation (ActivityPub) | ⏳ Next |
 
 The full plan (in Portuguese) is in [`docs/plano-inicial.md`](docs/plano-inicial.md) and architecture decisions are
 recorded in [`docs/adr/`](docs/adr/).

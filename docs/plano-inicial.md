@@ -395,7 +395,7 @@ Um PR por etapa. As notificações vêm cedo para que cada etapa seguinte já tr
 
 Ficou para depois: notificações em tempo real e resumo por e-mail, agrupar repostagens repetidas no feed, autocompletar `@usuario` no editor, paginação de conversas muito longas.
 
-### 10.5 M4: descoberta (em andamento)
+### 10.5 M4: entregue
 
 Um PR por etapa:
 
@@ -403,13 +403,18 @@ Um PR por etapa:
 2. [x] **Busca:** pessoas, posts e tags, pelo campo no cabeçalho ou em `/search`. Posts usam a busca de texto do PostgreSQL com uma configuração própria (`social_dev`): português, sem diferenciar acentos ("programacao" acha "programação"), título pesando mais que o conteúdo, e sintaxe de buscador ("frase exata", -excluir). Pessoas são encontradas por parte do nome ou do usuário (trigramas, `pg_trgm`), com o usuário exato primeiro. Tags, pelo começo do nome. O stemmer do português do PostgreSQL não trata todas as flexões (ex.: "funcional" e "funcionais" ficam diferentes); se incomodar, avaliar outro dicionário.
 3. [x] **Perfil ampliado e diretório:** área (12 opções, de front-end a embarcados) e senioridade (de estudante a staff) no perfil, opcionais e validadas também no banco. Diretório em `/directory` com filtros por tecnologia, área, senioridade e local (sem diferenciar acentos: "sao paulo" acha "São Paulo"), mais seguidos primeiro. Os filtros ficam na URL, então dá para compartilhar uma busca. Área, senioridade e local no perfil levam ao diretório filtrado; o Explorar e as páginas de tag também apontam para ele.
 4. [x] **Onboarding e sugestões de quem seguir:** contas novas passam por três passos antes do feed: stack, área, senioridade e local; tags para seguir (as da stack já vêm marcadas); pessoas sugeridas. Todos podem ser pulados. As sugestões pesam stack em comum, pessoas seguidas por quem você segue, mesma área e popularidade, e dizem o motivo ("Também usa #rust"). Um feed com poucos posts mostra "Quem seguir". A conclusão fica em `users.onboarding_completed_at`, que vem junto com a sessão; contas anteriores foram marcadas como concluídas na migração.
-5. [ ] **GitHub:** sugerir quem a pessoa já segue no GitHub e está na Social Dev, e mostrar repositórios fixados no perfil. Desenho combinado para o PR:
-   - **Pré-requisito manual:** OAuth App do GitHub para o ambiente local, conforme [docs/desenvolvimento/github-oauth.md](desenvolvimento/github-oauth.md). Os testes automáticos não dependem dele.
-   - **Tokens:** ligar `account.encryptOAuthTokens` no Better Auth antes de usar os tokens do GitHub, para que não fiquem em texto puro no banco. Escopos continuam `read:user` e `user:email` (só dados públicos).
-   - **Conectar o GitHub depois:** quem criou a conta com e-mail e senha ganha um botão "Conectar GitHub" nas configurações (`linkSocial` do Better Auth).
-   - **Importar conexões:** `GET /user/following` (paginado, 100 por página) com o token da pessoa; o resultado é cruzado com `accounts` (`provider_id = 'github'`, `account_id` = id numérico do GitHub). Entra como mais um motivo nas sugestões do onboarding e numa página "Quem você segue no GitHub", com botão de seguir em lote.
-   - **Repositórios fixados:** GraphQL `user { pinnedItems(first: 6, types: REPOSITORY) }`, guardados numa tabela com a data da última busca e atualizados no login e por um botão, no máximo uma vez por hora. A pessoa escolhe se mostra no perfil.
-   - **Testes:** o cliente do GitHub entra como dependência da API (como o `mailer`), com uma versão falsa nos testes de API e E2E.
-   - **Limites da API do GitHub:** 5.000 requisições por hora por token; erros e limites estourados não podem quebrar o login nem o perfil.
+5. [x] **GitHub:** quem entrou pelo GitHub (ou conectou o GitHub em `/settings/github`) vê quem já segue no GitHub e está na Social Dev, com "seguir todos", também no último passo do onboarding; e pode mostrar no perfil o login e os repositórios fixados. Como ficou:
+   - **Tokens** criptografados no banco (`account.encryptOAuthTokens`); a API os lê por `auth.api.getAccessToken`. Escopos continuam `read:user` e `user:email`.
+   - **Conectar depois** (`linkSocial`) só funciona se o e-mail principal do GitHub for o mesmo da conta. Permitir e-mails diferentes abre caminho para tomada de conta (aviso do próprio Better Auth); a página explica o erro quando acontece.
+   - **Conexões:** `GET /user/following` (até 10 páginas de 100), cruzado com `accounts` pelo id numérico do GitHub.
+   - **Repositórios fixados:** GraphQL `viewer.pinnedItems`, guardados em `github_profiles`. Em vez de buscar no login (o que exigiria um gancho circular no Better Auth), a API atualiza quando a pessoa abre as configurações do GitHub e os dados têm mais de uma hora, ou pelo botão "Atualizar" (no máximo a cada 5 minutos). A pessoa escolhe se aparecem no perfil.
+   - **Respostas do GitHub** são validadas com zod (URLs só de `github.com`, cores só `#rrggbb`); falhas e limites do GitHub mantêm os dados guardados em vez de quebrar a página.
+   - **Testes** usam um GitHub falso injetado nas dependências da API; o cliente real tem testes com `fetch` simulado.
 
 Ficou para depois do M4: limitar a quantidade de sugestões já vistas e dispensadas ("não sugerir de novo").
+
+### 10.6 Próximo: M5 (federação)
+
+WebFinger, Actor, seguir e ser seguido por contas remotas, publicar e receber posts e interações, testes contra um Mastodon real via túnel.
+
+**Antes de começar é preciso decidir o domínio** ([ADR 0002](adr/0002-federacao-activitypub.md)): os handles viram `@usuario@dominio`, e trocar de domínio depois de federar quebra as contas no fediverso.

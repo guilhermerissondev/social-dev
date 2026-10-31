@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 
 import { newUser, signUpAndConfirm } from './accounts.ts';
+import { clickAndWaitForApi } from './actions.ts';
 
 test('get notified about new followers and likes', async ({ browser, request }) => {
   const ada = newUser();
@@ -16,9 +17,12 @@ test('get notified about new followers and likes', async ({ browser, request }) 
 
   // Grace follows Ada and likes her post.
   await gracePage.goto(`/@${ada.username}`);
-  await gracePage.getByRole('button', { name: `Seguir @${ada.username}` }).click();
+  await clickAndWaitForApi(
+    gracePage.getByRole('button', { name: `Seguir @${ada.username}` }),
+    /\/follow$/,
+  );
   const like = gracePage.locator('article').getByRole('button', { name: 'Curtir' });
-  await like.click();
+  await clickAndWaitForApi(like, /\/like$/);
   await expect(like).toHaveAttribute('aria-pressed', 'true');
 
   // Ada sees the unread count, then both notifications.

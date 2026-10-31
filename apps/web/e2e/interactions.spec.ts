@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 
 import { newUser, signUpAndConfirm } from './accounts.ts';
+import { clickAndWaitForApi } from './actions.ts';
 
 test('like and save a post, then find it under Saved', async ({ page, request, browser }) => {
   const user = newUser();
@@ -10,11 +11,11 @@ test('like and save a post, then find it under Saved', async ({ page, request, b
 
   const post = page.locator('article').filter({ hasText: 'Worth keeping' });
   const like = post.getByRole('button', { name: 'Curtir' });
-  await like.click();
+  await clickAndWaitForApi(like, /\/like$/);
   await expect(like).toHaveAttribute('aria-pressed', 'true');
   await expect(like).toHaveText('1');
 
-  await post.getByRole('button', { name: 'Salvar' }).click();
+  await clickAndWaitForApi(post.getByRole('button', { name: 'Salvar' }), /\/bookmark$/);
   await expect(post.getByRole('button', { name: 'Salvar' })).toHaveAttribute(
     'aria-pressed',
     'true',
@@ -32,7 +33,10 @@ test('like and save a post, then find it under Saved', async ({ page, request, b
   await expect(page.locator('article')).toContainText('Worth keeping');
 
   // Unsaving from the Saved page, then reloading, leaves it empty.
-  await page.locator('article').getByRole('button', { name: 'Salvar' }).click();
+  await clickAndWaitForApi(
+    page.locator('article').getByRole('button', { name: 'Salvar' }),
+    /\/bookmark$/,
+  );
   await expect(page.locator('article').getByRole('button', { name: 'Salvar' })).toHaveAttribute(
     'aria-pressed',
     'false',

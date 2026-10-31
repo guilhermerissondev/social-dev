@@ -15,6 +15,8 @@ export const users = pgTable('users', {
   username: text().unique(),
   /** Handle as the user typed it, preserving case. */
   displayUsername: text(),
+  /** When the person finished or skipped onboarding. Until then, the feed sends them there. */
+  onboardingCompletedAt: timestamp({ withTimezone: true }),
   ...timestamps,
 });
 

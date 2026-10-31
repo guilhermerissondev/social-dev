@@ -5,8 +5,8 @@ import { actors } from './actors.ts';
 import { id } from './columns.ts';
 import { posts } from './posts.ts';
 
-/** Kinds of notification. Later M3 steps add replies, reposts and mentions. */
-export const notificationTypes = ['follow', 'like'] as const;
+/** Kinds of notification. Later M3 steps add reposts and mentions. */
+export const notificationTypes = ['follow', 'like', 'reply'] as const;
 export type NotificationType = (typeof notificationTypes)[number];
 
 /**

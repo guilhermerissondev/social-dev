@@ -27,14 +27,24 @@ export const PostSchema = z
       description: 'Replies in the conversation (top-level posts) or direct replies (replies)',
     }),
     likesCount: z.number().int(),
+    repostsCount: z.number().int(),
     likedByViewer: z.boolean().openapi({ description: 'False when not signed in' }),
     bookmarkedByViewer: z.boolean().openapi({ description: 'False when not signed in' }),
+    repostedByViewer: z.boolean().openapi({ description: 'False when not signed in' }),
   })
   .openapi('Post');
 
+const TimelineEntrySchema = PostSchema.extend({
+  entryId: z.uuid().openapi({ description: 'Post id, or repost id for reposts' }),
+  repostedBy: z
+    .object({ username: z.string(), displayName: z.string() })
+    .nullable()
+    .openapi({ description: 'Set when the entry is a repost' }),
+}).openapi('TimelineEntry');
+
 export const PostPageSchema = z
   .object({
-    items: z.array(PostSchema),
+    items: z.array(TimelineEntrySchema),
     nextCursor: z.string().nullable().openapi({ description: 'Pass back to get the next page' }),
   })
   .openapi('PostPage');

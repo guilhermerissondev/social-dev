@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { renderMarkdown } from '../src/index.ts';
+import { findMentions, renderMarkdown } from '../src/index.ts';
 
 const html = (source: string) => renderMarkdown(source).html;
 
@@ -71,5 +71,35 @@ describe('renderMarkdown', () => {
       });
       expect(result.html).toContain('href="https://social.dev/tags/go"');
     });
+  });
+});
+
+describe('mentions', () => {
+  const known = new Map([
+    ['ada', 'Ada'],
+    ['grace_h', 'grace_h'],
+  ]);
+
+  it('finds candidates outside code, links, emails and remote handles', () => {
+    const source = [
+      'Hi @Ada and @grace_h, also @nobody_here.',
+      '`@incode` and [@inlink](https://x.dev)',
+      'mail ada@example.com and remote @ada@mastodon.social',
+      '@ab is too short',
+    ].join('\n\n');
+    expect(findMentions(source)).toEqual(['ada', 'grace_h', 'nobody_here']);
+  });
+
+  it('links only accounts that exist, with their display case', () => {
+    const result = renderMarkdown('Hi @ADA and @nobody_here', { mentions: known });
+    expect(result.mentions).toEqual(['Ada']);
+    expect(result.html).toBe('<p>Hi <a href="/@Ada" class="mention">@ADA</a> and @nobody_here</p>');
+  });
+
+  it('works next to hashtags and punctuation', () => {
+    const result = renderMarkdown('(@ada) loves #rust!', { mentions: known });
+    expect(result.html).toBe(
+      '<p>(<a href="/@Ada" class="mention">@ada</a>) loves <a href="/tags/rust" class="hashtag">#rust</a>!</p>',
+    );
   });
 });

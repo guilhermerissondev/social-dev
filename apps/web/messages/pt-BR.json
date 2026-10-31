@@ -174,7 +174,7 @@
     "write": "Escrever",
     "preview": "Pré-visualizar",
     "nothingToPreview": "Nada para pré-visualizar.",
-    "markdownHint": "Markdown com blocos de código. Use #tags para aparecer nos tópicos.",
+    "markdownHint": "Markdown com blocos de código. Use #tags para aparecer nos tópicos e @usuario para mencionar alguém.",
     "publish": "Publicar",
     "save": "Salvar",
     "editTitle": "Editar post",
@@ -217,13 +217,14 @@
   },
   "Notifications": {
     "title": "Notificações",
-    "empty": "Nenhuma notificação ainda. Quando alguém seguir você ou curtir seus posts, vai aparecer aqui.",
+    "empty": "Nenhuma notificação ainda. Quando alguém seguir você, mencionar você ou interagir com seus posts, vai aparecer aqui.",
     "follow": "<actor></actor> começou a seguir você",
     "like": "<actor></actor> curtiu seu post",
     "unread": "não lida",
     "older": "Notificações mais antigas",
     "reply": "<actor></actor> respondeu seu post",
-    "repost": "<actor></actor> repostou seu post"
+    "repost": "<actor></actor> repostou seu post",
+    "mention": "<actor></actor> mencionou você"
   },
   "Thread": {
     "reply": "Responder",

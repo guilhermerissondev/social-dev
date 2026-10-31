@@ -108,7 +108,9 @@
     "edit": "Edit profile",
     "location": "Location",
     "joined": "On Social Dev since",
-    "stack": "Stack"
+    "stack": "Stack",
+    "posts": "Posts",
+    "noPosts": "No posts yet."
   },
   "ProfileForm": {
     "title": "Edit profile",
@@ -141,5 +143,36 @@
       "invalid": "Use 3 to 30 characters: letters, numbers and _.",
       "unknown": "Something went wrong. Try again."
     }
+  },
+  "Post": {
+    "edited": "edited",
+    "readMore": "Keep reading",
+    "older": "Older posts",
+    "edit": "Edit",
+    "delete": "Delete",
+    "confirmDelete": "Delete this post? This cannot be undone.",
+    "deleteFailed": "Could not delete the post. Try again."
+  },
+  "Composer": {
+    "title": "Title",
+    "addTitle": "Add title",
+    "content": "Post content",
+    "placeholder": "What are you building?",
+    "mode": "Editing mode",
+    "write": "Write",
+    "preview": "Preview",
+    "nothingToPreview": "Nothing to preview.",
+    "markdownHint": "Markdown with code blocks. Use #tags to show up in topics.",
+    "publish": "Publish",
+    "save": "Save",
+    "editTitle": "Edit post",
+    "errors": {
+      "tooLong": "Posts can have at most {max} characters.",
+      "invalid": "Check the post and try again.",
+      "unknown": "Something went wrong. Try again."
+    }
+  },
+  "Tag": {
+    "noPosts": "No posts with this tag yet."
   }
 }

@@ -1,4 +1,6 @@
 @import 'tailwindcss';
+@import 'highlight.js/styles/github-dark.css';
+@plugin '@tailwindcss/typography';
 @source '../../../../packages/ui/src';
 
 @theme {
@@ -8,4 +10,17 @@
 
 :root {
   color-scheme: dark;
+}
+
+/* Rendered post Markdown (components/posts/post-body.tsx). */
+.post-body :not(pre) > code {
+  @apply rounded bg-zinc-800 px-1.5 py-0.5 font-normal;
+}
+.post-body code::before,
+.post-body code::after {
+  content: none;
+}
+.post-body .hljs {
+  background: transparent;
+  padding: 0;
 }

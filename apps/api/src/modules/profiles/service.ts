@@ -1,6 +1,8 @@
 import { schema, type Database, type Executor } from '@social-dev/db';
+import { and, asc, eq, isNull, sql } from '@social-dev/db/orm';
 import { normalizeTag, PROFILE_LIMITS, type UpdateProfileInput } from '@social-dev/shared';
-import { and, asc, eq, inArray, isNull, sql } from '@social-dev/db/orm';
+
+import { upsertTags } from '../tags/service.ts';
 
 const { actors, actorTechnologies, tags, users } = schema;
 
@@ -105,6 +107,12 @@ export async function getLocalProfile(db: Database, username: string): Promise<P
   };
 }
 
+/** Returns the id of the user's local actor, or null when the user has no username yet. */
+export async function findActorIdByUser(db: Database, userId: string): Promise<string | null> {
+  const [row] = await db.select({ id: actors.id }).from(actors).where(eq(actors.userId, userId));
+  return row?.id ?? null;
+}
+
 /** Replaces the editable profile fields. The account name follows the display name. */
 export async function updateProfile(
   db: Database,
@@ -132,24 +140,10 @@ export async function updateProfile(
     await tx.update(users).set({ name: input.displayName }).where(eq(users.id, userId));
 
     await tx.delete(actorTechnologies).where(eq(actorTechnologies.actorId, actor.id));
-    if (technologies.length === 0) return;
-
+    const tagIds = await upsertTags(tx, technologies);
+    if (tagIds.length === 0) return;
     await tx
-      .insert(tags)
-      .values(technologies.map((name) => ({ name })))
-      .onConflictDoNothing();
-    const rows = await tx
-      .select({ id: tags.id, name: tags.name })
-      .from(tags)
-      .where(inArray(tags.name, technologies));
-    const idByName = new Map(rows.map((tag) => [tag.name, tag.id]));
-
-    await tx.insert(actorTechnologies).values(
-      technologies.map((name, position) => {
-        const tagId = idByName.get(name);
-        if (!tagId) throw new Error(`tag ${name} was not created`);
-        return { actorId: actor.id, tagId, position };
-      }),
-    );
+      .insert(actorTechnologies)
+      .values(tagIds.map((tagId, position) => ({ actorId: actor.id, tagId, position })));
   });
 }

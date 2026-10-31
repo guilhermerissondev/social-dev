@@ -13,6 +13,17 @@ const envSchema = z
     /** Public URL of the web app. Auth endpoints are served to browsers through it (/api/auth). */
     WEB_URL: z.url(),
     BETTER_AUTH_SECRET: z.string().min(32, 'must be at least 32 characters'),
+    /**
+     * Header that carries the real client IP, set by the reverse proxy in front of the API
+     * (e.g. `cf-connecting-ip` behind Cloudflare). Used for rate limiting. Only set it when
+     * clients cannot reach the API directly, otherwise they could spoof it.
+     */
+    CLIENT_IP_HEADER: optional,
+    /** Set to false only for automated end-to-end tests. */
+    AUTH_RATE_LIMIT: z
+      .enum(['true', 'false'])
+      .default('true')
+      .transform((value) => value === 'true'),
 
     SMTP_URL: z.url({ protocol: /^smtps?$/ }),
     MAIL_FROM: z.string().min(1).default('Social Dev <no-reply@localhost>'),

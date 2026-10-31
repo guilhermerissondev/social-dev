@@ -6,6 +6,7 @@ import type { Auth } from './auth/auth.ts';
 import { loadSession } from './auth/session.ts';
 import { AppError, errorBody } from './errors.ts';
 import type { Logger } from './logger.ts';
+import { authProvidersRoutes } from './routes/auth-providers.ts';
 import { healthRoutes } from './routes/health.ts';
 import { meRoutes } from './routes/me.ts';
 
@@ -61,6 +62,7 @@ export function createApp(deps: AppDeps) {
 
   app.use('/api/*', loadSession);
   app.route('/', meRoutes);
+  app.route('/', authProvidersRoutes);
 
   app.doc31('/openapi.json', {
     openapi: '3.1.0',

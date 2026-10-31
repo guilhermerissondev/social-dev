@@ -11,7 +11,13 @@ const env = loadEnv();
 const logger = createLogger(env);
 const database = createDatabase(env.DATABASE_URL);
 const mailer = createSmtpMailer(env.SMTP_URL, env.MAIL_FROM);
-const auth = createAuth({ db: database.db, env, mailer, logger });
+const auth = createAuth({
+  db: database.db,
+  env,
+  mailer,
+  logger,
+  rateLimit: env.AUTH_RATE_LIMIT,
+});
 const app = createApp({ db: database.db, logger, auth });
 
 const server = serve({ fetch: app.fetch, port: env.API_PORT }, (info) => {

@@ -20,6 +20,7 @@ export interface AuthDeps {
     | 'GITHUB_CLIENT_SECRET'
     | 'GITLAB_CLIENT_ID'
     | 'GITLAB_CLIENT_SECRET'
+    | 'CLIENT_IP_HEADER'
   >;
   mailer: Mailer;
   logger: Logger;
@@ -67,6 +68,9 @@ export function createAuth({ db, env, mailer, logger, rateLimit = true }: AuthDe
     advanced: {
       // Let PostgreSQL generate UUIDv7 ids.
       database: { generateId: false },
+      ...(env.CLIENT_IP_HEADER && {
+        ipAddress: { ipAddressHeaders: [env.CLIENT_IP_HEADER] },
+      }),
     },
     emailAndPassword: {
       enabled: true,
@@ -81,6 +85,8 @@ export function createAuth({ db, env, mailer, logger, rateLimit = true }: AuthDe
     },
     emailVerification: {
       sendOnSignUp: true,
+      // Signing in with an unverified email sends a fresh link.
+      sendOnSignIn: true,
       autoSignInAfterVerification: true,
       sendVerificationEmail: async ({ user, url }) => {
         sendInBackground(verificationEmail(user, url));

@@ -135,3 +135,10 @@ describe('GET /api/me', () => {
     });
   });
 });
+
+describe('GET /api/auth-providers', () => {
+  it('lists no providers when none are configured', async () => {
+    const res = await app.request('/api/auth-providers');
+    expect(await res.json()).toEqual({ providers: [] });
+  });
+});

@@ -4,9 +4,11 @@
 - Data: 2026-10-30
 
 ## Contexto
+
 O código da Social Dev será aberto desde o início. Além do produto, o projeto é uma peça importante do portfólio do autor.
 
 ## Decisão
+
 - Repositório público no GitHub.
 - O histórico do repositório faz parte do portfólio: PRs pequenos e descritivos, Conventional Commits, CI visível, ADRs publicados.
 - Arquivos obrigatórios: `README`, `LICENSE`, `SECURITY.md` (como reportar vulnerabilidades), `.env.example`.
@@ -14,6 +16,7 @@ O código da Social Dev será aberto desde o início. Além do produto, o projet
 - **Idioma:** código, commits, issues e PRs em inglês. README em inglês com versão em português (`README.pt-BR.md`). Documentação de produto e ADRs em português.
 
 ## Consequências
+
 - Nenhum segredo pode entrar no histórico: varredura com gitleaks no CI e pre-commit, segredos apenas em `.env` ignorado pelo git.
 - Vulnerabilidades ficam visíveis para todos: Dependabot/Renovate e alertas de segurança do GitHub ativados.
 - Qualquer pessoa pode abrir issues e PRs. `CONTRIBUTING.md` e regras de contribuição podem esperar até o projeto estar mais maduro.

@@ -2,8 +2,12 @@ packages:
   - apps/*
   - packages/*
 
+# Packages allowed to run install scripts. The disabled ones ship prebuilt binaries,
+# so their scripts are only fallbacks we do not need.
 allowBuilds:
   esbuild: true
+  '@parcel/watcher': false
+  '@swc/core': false
   cpu-features: false
   protobufjs: false
   ssh2: false

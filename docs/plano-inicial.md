@@ -400,7 +400,7 @@ Ficou para depois: notificações em tempo real e resumo por e-mail, agrupar rep
 Um PR por etapa:
 
 1. [x] **Explorar:** posts populares do dia, da semana ou do mês (curtidas + respostas + repostagens em dobro, porque levam o post a gente nova), tags em alta e filtro por tag. Aberto a visitantes, com link no cabeçalho e no feed vazio. A pontuação é calculada na leitura; guardar pronta fica para quando o volume pedir.
-2. [ ] **Busca:** pessoas, posts e tags, com a busca de texto do PostgreSQL em português.
+2. [x] **Busca:** pessoas, posts e tags, pelo campo no cabeçalho ou em `/search`. Posts usam a busca de texto do PostgreSQL com uma configuração própria (`social_dev`): português, sem diferenciar acentos ("programacao" acha "programação"), título pesando mais que o conteúdo, e sintaxe de buscador ("frase exata", -excluir). Pessoas são encontradas por parte do nome ou do usuário (trigramas, `pg_trgm`), com o usuário exato primeiro. Tags, pelo começo do nome. O stemmer do português do PostgreSQL não trata todas as flexões (ex.: "funcional" e "funcionais" ficam diferentes); se incomodar, avaliar outro dicionário.
 3. [ ] **Perfil ampliado e diretório:** área (front, back, dados, mobile...) e senioridade no perfil; diretório com filtros por tecnologia, área, senioridade e local ("devs de Rust em Curitiba").
 4. [ ] **Onboarding e sugestões de quem seguir:** depois do cadastro, escolher stack, área e tags de interesse e receber sugestões, para o feed nunca começar vazio.
 5. [ ] **GitHub:** sugerir quem a pessoa já segue no GitHub e está na Social Dev, e mostrar repositórios fixados no perfil.

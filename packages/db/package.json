@@ -7,6 +7,7 @@
   "exports": {
     ".": "./src/index.ts",
     "./orm": "./src/orm.ts",
+    "./pg-core": "./src/pg-core.ts",
     "./testing/global-setup": "./src/testing/global-setup.ts"
   },
   "scripts": {

@@ -81,6 +81,8 @@ pnpm dev
 
 Emails sent locally (account confirmation, password reset) show up in Mailpit at http://localhost:8025.
 
+GitHub login (optional): see [docs/desenvolvimento/github-oauth.md](docs/desenvolvimento/github-oauth.md) (in Portuguese).
+
 To enable "Continue with GitHub/GitLab", create an OAuth app and fill the matching variables in `.env`
 (instructions are in `.env.example`).
 

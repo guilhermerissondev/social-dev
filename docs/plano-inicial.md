@@ -372,13 +372,17 @@ Ficou para depois (anotado para os próximos marcos):
 - **IP real do cliente:** o proxy do Next.js em desenvolvimento não repassa o IP de quem acessa, então localmente todas as requisições dividem o mesmo limite de tentativas. Em produção, o proxy da frente (Cloudflare ou load balancer) precisa informar o IP real, configurado em `CLIENT_IP_HEADER`, e a API não pode ficar acessível diretamente. Decisão de infraestrutura do M7.
 - **E-mails em inglês:** os templates estão só em português até o idioma do usuário ser salvo no perfil.
 
-### 10.3 M2: núcleo social local (em andamento)
+### 10.3 M2: entregue
 
-Um PR por etapa, nesta ordem:
+Um PR por etapa:
 
 1. [x] **Perfil técnico:** tabela de atores pronta para a federação ([ADR 0007](adr/0007-atores-e-perfis.md)), página pública em `/@usuario`, edição de perfil (nome, bio, local, links, tecnologias), escolha de nome de usuário para contas do GitHub/GitLab, proteção contra CSRF na API.
 2. [x] **Posts em Markdown:** publicar (com pré-visualização), editar e excluir; HTML sanitizado gerado no servidor; destaque de sintaxe; hashtags viram tags; posts no perfil, página do post e página da tag. Detalhes no [ADR 0003](adr/0003-modelo-de-conteudo.md).
 3. [x] **Seguir pessoas e tags:** seguir e deixar de seguir, contadores e listas de seguidores e seguidos no perfil, botão de seguir na página da tag. As tecnologias do perfil levam à página da tag. Os follows já ligam ator a ator, então seguidores remotos (M5) entram na mesma tabela; o estado "pendente" que o ActivityPub exige entra junto com a federação.
-4. [ ] **Feed "Seguindo":** posts de quem você segue e das tags que você segue, em ordem cronológica, com paginação por cursor.
+4. [x] **Feed "Seguindo":** seus posts, os de quem você segue e os das tags que você segue, em ordem cronológica, com paginação por cursor. Montado na leitura (seção 6.3); o compositor fica no topo e o post publicado aparece em seguida.
 
 Ficou para depois: upload de avatar e de imagens nos posts (módulo de mídia), repositórios fixados do GitHub e lista curada de tecnologias (M4), limite de posts por minuto (anti-spam, antes do beta).
+
+### 10.4 Próximo: M3 (interações)
+
+Curtidas, comentários (com respostas), repostagens, salvos, menções e notificações in-app.

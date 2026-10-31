@@ -1,15 +1,27 @@
 import { schema, type Database, type Executor } from '@social-dev/db';
 import { and, desc, eq, exists, inArray, isNull, lt, or, sql, type SQL } from '@social-dev/db/orm';
-import { renderMarkdown } from '@social-dev/markdown';
+import { alias } from '@social-dev/db/pg-core';
+import { findMentions, renderMarkdown } from '@social-dev/markdown';
 import { POST_LIMITS, type PostInput } from '@social-dev/shared';
 
 import { decodeCursor, encodeCursor } from '../../lib/cursor.ts';
-import { notify } from '../notifications/service.ts';
+import { notify, retract } from '../notifications/service.ts';
 import { isLocalUsername } from '../profiles/service.ts';
 import { upsertTags } from '../tags/service.ts';
 
-const { actors, bookmarks, follows, likes, posts, postTags, reposts, tagFollows, tags, users } =
-  schema;
+const {
+  actors,
+  bookmarks,
+  follows,
+  likes,
+  postMentions,
+  posts,
+  postTags,
+  reposts,
+  tagFollows,
+  tags,
+  users,
+} = schema;
 
 export const PAGE_SIZE = 20;
 
@@ -146,6 +158,76 @@ async function saveTags(tx: Executor, postId: string, names: string[]) {
   }
 }
 
+/**
+ * Renders post Markdown. Only @mentions of local accounts that exist become links, so the
+ * accounts are looked up first.
+ */
+async function renderPost(db: Executor, content: string) {
+  const candidates = findMentions(content);
+  const accounts =
+    candidates.length > 0
+      ? await db
+          .select({ id: actors.id, username: actors.username })
+          .from(actors)
+          .where(and(isNull(actors.domain), inArray(sql`lower(${actors.username})`, candidates)))
+      : [];
+  const byUsername = new Map(accounts.map((account) => [account.username.toLowerCase(), account]));
+
+  const rendered = renderMarkdown(content, {
+    mentions: new Map(
+      accounts.map((account) => [account.username.toLowerCase(), account.username]),
+    ),
+  });
+  return {
+    html: rendered.html,
+    tags: rendered.tags,
+    mentionedIds: rendered.mentions.flatMap(
+      (username) => byUsername.get(username.toLowerCase())?.id ?? [],
+    ),
+  };
+}
+
+/**
+ * Replaces the post's mentions. People newly mentioned are notified and people no longer
+ * mentioned lose the notification, so editing a post never notifies anyone twice.
+ * `skipRecipientId` is someone already notified another way (the author of the post
+ * a reply answers).
+ */
+async function saveMentions(
+  tx: Executor,
+  post: { id: string; authorId: string },
+  mentionedIds: string[],
+  skipRecipientId: string | null,
+) {
+  const previous = await tx
+    .select({ actorId: postMentions.actorId })
+    .from(postMentions)
+    .where(eq(postMentions.postId, post.id));
+  const before = new Set(previous.map((row) => row.actorId));
+  const after = new Set(mentionedIds);
+
+  await tx.delete(postMentions).where(eq(postMentions.postId, post.id));
+  if (after.size > 0) {
+    await tx
+      .insert(postMentions)
+      .values([...after].map((actorId) => ({ postId: post.id, actorId })));
+  }
+
+  const event = (recipientId: string) =>
+    ({ recipientId, actorId: post.authorId, type: 'mention', postId: post.id }) as const;
+  for (const actorId of before) {
+    if (!after.has(actorId)) await retract(tx, event(actorId));
+  }
+  for (const actorId of after) {
+    if (!before.has(actorId) && actorId !== skipRecipientId) await notify(tx, event(actorId));
+  }
+}
+
+/** HTML for the composer's preview, rendered exactly like a published post. */
+export async function previewPost(db: Database, content: string): Promise<string> {
+  return (await renderPost(db, content)).html;
+}
+
 export type CreatePostResult = { id: string } | 'parent_not_found';
 
 /**
@@ -158,7 +240,7 @@ export async function createPost(
   input: PostInput,
   replyToId?: string,
 ): Promise<CreatePostResult> {
-  const rendered = renderMarkdown(input.content);
+  const rendered = await renderPost(db, input.content);
   return db.transaction(async (tx) => {
     let parent: { authorId: string; threadId: string } | null = null;
     if (replyToId) {
@@ -184,6 +266,12 @@ export async function createPost(
     if (!post) throw new Error('post was not created');
 
     await saveTags(tx, post.id, rendered.tags);
+    await saveMentions(
+      tx,
+      { id: post.id, authorId },
+      rendered.mentionedIds,
+      parent?.authorId ?? null,
+    );
     if (parent) {
       await notify(tx, {
         recipientId: parent.authorId,
@@ -213,10 +301,18 @@ export async function updatePost(
   authorId: string,
   input: PostInput,
 ): Promise<OwnPostResult> {
-  const rendered = renderMarkdown(input.content);
+  const rendered = await renderPost(db, input.content);
   return db.transaction(async (tx) => {
     const access = await checkOwner(tx, postId, authorId);
     if (access !== 'ok') return access;
+
+    // The author of the post a reply answers already got a reply notification.
+    const parents = alias(posts, 'parents');
+    const [parent] = await tx
+      .select({ authorId: parents.authorId })
+      .from(posts)
+      .innerJoin(parents, eq(parents.id, posts.replyToId))
+      .where(eq(posts.id, postId));
 
     await tx
       .update(posts)
@@ -229,6 +325,12 @@ export async function updatePost(
       })
       .where(eq(posts.id, postId));
     await saveTags(tx, postId, rendered.tags);
+    await saveMentions(
+      tx,
+      { id: postId, authorId },
+      rendered.mentionedIds,
+      parent?.authorId ?? null,
+    );
     return 'ok';
   });
 }

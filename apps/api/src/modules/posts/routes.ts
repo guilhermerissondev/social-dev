@@ -1,5 +1,4 @@
 import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi';
-import { renderMarkdown } from '@social-dev/markdown';
 import { normalizeTag, postContentSchema, postInputSchema } from '@social-dev/shared';
 import type { Context } from 'hono';
 
@@ -13,6 +12,7 @@ import {
   getPost,
   listPosts,
   listThread,
+  previewPost,
   updatePost,
   type OwnPostResult,
 } from './service.ts';
@@ -173,8 +173,8 @@ export const postRoutes = new OpenAPIHono<AppEnv>()
     const items = await listThread(c.var.deps.db, c.req.valid('param').id, await viewerActorId(c));
     return c.json({ items }, 200);
   })
-  .openapi(routes.preview, (c) => {
-    return c.json({ html: renderMarkdown(c.req.valid('json').content).html }, 200);
+  .openapi(routes.preview, async (c) => {
+    return c.json({ html: await previewPost(c.var.deps.db, c.req.valid('json').content) }, 200);
   })
   .openapi(routes.get, async (c) => {
     return c.json(await loadPost(c, c.req.valid('param').id), 200);

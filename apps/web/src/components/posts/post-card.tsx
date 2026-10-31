@@ -30,9 +30,12 @@ export function postPath(post: Pick<Post, 'id' | 'author'>) {
 export function PostCard({
   post,
   fallbackHref,
+  repostedBy = null,
   variant = 'list',
 }: {
   post: Post;
+  /** Set when the post appears in a list because this person reposted it. */
+  repostedBy?: { username: string; displayName: string } | null;
   /** Where Like and Save send viewers who cannot use them; see `actionFallbackHref`. */
   fallbackHref: '/login' | '/welcome' | null;
   variant?: 'list' | 'page' | 'reply';
@@ -46,6 +49,18 @@ export function PostCard({
 
   return (
     <article className={variant === 'reply' ? 'py-3' : 'border-b border-zinc-800 py-6'}>
+      {repostedBy && (
+        <p className="mb-3 text-sm text-zinc-500">
+          {t.rich('repostedBy', {
+            name: repostedBy.displayName,
+            link: (chunks) => (
+              <Link href={`/@${repostedBy.username}`} className="text-zinc-300 hover:underline">
+                {chunks}
+              </Link>
+            ),
+          })}
+        </p>
+      )}
       {/* In a conversation the tree already shows what a reply answers. */}
       {post.replyTo && variant !== 'reply' && (
         <p className="mb-3 text-sm text-zinc-500">
@@ -109,6 +124,8 @@ export function PostCard({
         repliesCount={post.repliesCount}
         likesCount={post.likesCount}
         liked={post.likedByViewer}
+        repostsCount={post.repostsCount}
+        reposted={post.repostedByViewer}
         bookmarked={post.bookmarkedByViewer}
         fallbackHref={fallbackHref}
       />

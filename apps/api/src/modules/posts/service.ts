@@ -8,7 +8,8 @@ import { notify } from '../notifications/service.ts';
 import { isLocalUsername } from '../profiles/service.ts';
 import { upsertTags } from '../tags/service.ts';
 
-const { actors, bookmarks, follows, likes, posts, postTags, tagFollows, tags, users } = schema;
+const { actors, bookmarks, follows, likes, posts, postTags, reposts, tagFollows, tags, users } =
+  schema;
 
 export const PAGE_SIZE = 20;
 
@@ -34,13 +35,22 @@ export interface PostView {
   /** Replies in the conversation for a top-level post; direct replies for a reply. */
   repliesCount: number;
   likesCount: number;
-  /** Whether the signed-in viewer liked or saved the post. False for visitors. */
+  repostsCount: number;
+  /** Whether the signed-in viewer liked, saved or reposted the post. False for visitors. */
   likedByViewer: boolean;
   bookmarkedByViewer: boolean;
+  repostedByViewer: boolean;
+}
+
+/** A post as it appears in a list: on its own, or reposted by someone. */
+export interface TimelineEntry extends PostView {
+  /** The post id, or the repost id for reposts. Unique within a list and used as the cursor. */
+  entryId: string;
+  repostedBy: { username: string; displayName: string } | null;
 }
 
 export interface PostPage {
-  items: PostView[];
+  items: TimelineEntry[];
   /** Pass as `before` to get the next (older) page. Null on the last page. */
   nextCursor: string | null;
 }
@@ -76,6 +86,10 @@ function postColumns(viewerId: string | null) {
       : sql<boolean>`false`,
     bookmarkedByViewer: viewerId
       ? sql<boolean>`exists(select 1 from ${bookmarks} where ${bookmarks.postId} = ${posts.id} and ${bookmarks.actorId} = ${viewerId})`
+      : sql<boolean>`false`,
+    repostsCount: sql<number>`(select count(*) from ${reposts} where ${reposts.postId} = ${posts.id})::int`,
+    repostedByViewer: viewerId
+      ? sql<boolean>`exists(select 1 from ${reposts} where ${reposts.postId} = ${posts.id} and ${reposts.actorId} = ${viewerId})`
       : sql<boolean>`false`,
   };
 }
@@ -113,6 +127,8 @@ function toView(row: PostRow): PostView {
     likesCount: row.likesCount,
     likedByViewer: row.likedByViewer,
     bookmarkedByViewer: row.bookmarkedByViewer,
+    repostsCount: row.repostsCount,
+    repostedByViewer: row.repostedByViewer,
   };
 }
 
@@ -268,7 +284,32 @@ function matchCondition(filter: PostFilter): SQL | undefined {
   }
 }
 
-/** Newest posts matching the filter, one page at a time. */
+/** Reposts that belong in the list, or null for lists without reposts. */
+function repostCondition(filter: PostFilter): SQL | undefined | null {
+  switch (filter.kind) {
+    case 'author':
+      return eq(
+        reposts.actorId,
+        sql`(select ${actors.id} from ${actors} where ${isLocalUsername(filter.username)})`,
+      );
+    case 'feed':
+      return or(
+        eq(reposts.actorId, filter.actorId),
+        inArray(
+          reposts.actorId,
+          sql`(select ${follows.followeeId} from ${follows} where ${follows.followerId} = ${filter.actorId})`,
+        ),
+      );
+    case 'tag':
+      return null;
+  }
+}
+
+/**
+ * Newest entries matching the filter, one page at a time. Profiles and the feed mix in
+ * reposts at the time they were made: posts and reposts both have time-ordered ids, so
+ * one ordering by id covers both.
+ */
 export async function listPosts(
   db: Database,
   filter: PostFilter,
@@ -278,13 +319,60 @@ export async function listPosts(
     limit = PAGE_SIZE,
   }: { before?: string | undefined; viewerId?: string | null; limit?: number } = {},
 ): Promise<PostPage> {
-  const rows = await selectPosts(db, viewerId)
-    .where(and(filterCondition(filter), before ? lt(posts.id, before) : undefined))
-    .orderBy(desc(posts.id))
-    .limit(limit + 1);
+  const postEntries = sql`select ${posts.id} as entry_id, ${posts.id} as post_id, null::uuid as reposter_id
+    from ${posts} inner join ${actors} on ${actors.id} = ${posts.authorId}
+    where ${and(filterCondition(filter), before ? lt(posts.id, before) : undefined)}`;
+  const reposted = repostCondition(filter);
+  const repostEntries =
+    reposted === null
+      ? sql``
+      : sql`union all select ${reposts.id}, ${reposts.postId}, ${reposts.actorId} from ${reposts}
+          where ${and(reposted, before ? lt(reposts.id, before) : undefined)}`;
 
-  const items = rows.slice(0, limit).map(toView);
-  return { items, nextCursor: rows.length > limit ? (items.at(-1)?.id ?? null) : null };
+  const entries = await db.execute<{
+    entry_id: string;
+    post_id: string;
+    reposter_id: string | null;
+  }>(
+    sql`select * from (${postEntries} ${repostEntries}) as entries
+      order by entry_id desc limit ${limit + 1}`,
+  );
+  const page = entries.slice(0, limit);
+  return {
+    items: await toEntries(db, page, viewerId),
+    nextCursor: entries.length > limit ? (page.at(-1)?.entry_id ?? null) : null,
+  };
+}
+
+/** Loads the posts and reposters behind a page of entries, keeping the entries' order. */
+async function toEntries(
+  db: Database,
+  entries: { entry_id: string; post_id: string; reposter_id: string | null }[],
+  viewerId: string | null,
+): Promise<TimelineEntry[]> {
+  if (entries.length === 0) return [];
+
+  const postIds = [...new Set(entries.map((entry) => entry.post_id))];
+  const reposterIds = [...new Set(entries.flatMap((entry) => entry.reposter_id ?? []))];
+  const [rows, reposters] = await Promise.all([
+    selectPosts(db, viewerId).where(inArray(posts.id, postIds)),
+    reposterIds.length > 0
+      ? db
+          .select({ id: actors.id, username: actors.username, displayName: actors.displayName })
+          .from(actors)
+          .where(inArray(actors.id, reposterIds))
+      : Promise.resolve([]),
+  ]);
+  const postById = new Map(rows.map((row) => [row.id, toView(row)]));
+  const reposterById = new Map(reposters.map(({ id, ...reposter }) => [id, reposter]));
+
+  // A post deleted between the two queries is simply skipped.
+  return entries.flatMap((entry) => {
+    const post = postById.get(entry.post_id);
+    if (!post) return [];
+    const repostedBy = entry.reposter_id ? (reposterById.get(entry.reposter_id) ?? null) : null;
+    return [{ ...post, entryId: entry.entry_id, repostedBy }];
+  });
 }
 
 /** Posts the actor saved, most recently saved first. Only ever shown to that actor. */
@@ -317,7 +405,7 @@ export async function listBookmarkedPosts(
   const page = rows.slice(0, PAGE_SIZE);
   const last = page.at(-1);
   return {
-    items: page.map(toView),
+    items: page.map((row) => ({ ...toView(row), entryId: row.id, repostedBy: null })),
     nextCursor:
       rows.length > PAGE_SIZE && last
         ? encodeCursor({ at: last.savedAt.toISOString(), id: last.id })

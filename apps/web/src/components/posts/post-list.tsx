@@ -25,7 +25,12 @@ export function PostList({
   return (
     <div>
       {page.items.map((post) => (
-        <PostCard key={post.id} post={post} fallbackHref={fallbackHref} />
+        <PostCard
+          key={post.entryId}
+          post={post}
+          repostedBy={post.repostedBy}
+          fallbackHref={fallbackHref}
+        />
       ))}
       {page.nextCursor && (
         <div className="py-6 text-center">

@@ -48,8 +48,10 @@ const bookmarksRoute = createRoute({
 
 const app = new OpenAPIHono<AppEnv>();
 
-for (const kind of ['like', 'bookmark'] as const) {
-  const noun = kind === 'like' ? 'Like' : 'Save';
+const nouns = { like: 'Like', bookmark: 'Save', repost: 'Repost' } as const;
+
+for (const kind of ['like', 'bookmark', 'repost'] as const) {
+  const noun = nouns[kind];
 
   app.openapi(interactionRoute(kind, 'post', `${noun} a post`), async (c) => {
     const result = await addInteraction(

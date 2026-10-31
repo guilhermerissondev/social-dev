@@ -16,12 +16,21 @@ export interface Post {
   threadId: string | null;
   repliesCount: number;
   likesCount: number;
+  repostsCount: number;
   likedByViewer: boolean;
   bookmarkedByViewer: boolean;
+  repostedByViewer: boolean;
+}
+
+/** A post in a list: on its own, or reposted by someone. */
+export interface TimelineEntry extends Post {
+  /** Unique within a list: the post id, or the repost id. */
+  entryId: string;
+  repostedBy: { username: string; displayName: string } | null;
 }
 
 export interface PostPage {
-  items: Post[];
+  items: TimelineEntry[];
   nextCursor: string | null;
 }
 

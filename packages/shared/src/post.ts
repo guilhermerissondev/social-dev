@@ -31,3 +31,22 @@ export const postInputSchema = z.object({
 });
 
 export type PostInput = z.infer<typeof postInputSchema>;
+
+/**
+ * A short plain-text version of post Markdown, for notifications, link previews and
+ * meta descriptions. Approximate: it strips common syntax, not every Markdown rule.
+ */
+export function plainExcerpt(markdown: string, maxLength = 160): string {
+  const text = markdown
+    .replace(/```[\s\S]*?```/g, ' ')
+    .replace(/!?\[([^\]]*)\]\([^)]*\)/g, '$1')
+    .replace(/[#*_`>~]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+  const characters = Array.from(graphemes.segment(text), (part) => part.segment);
+  if (characters.length <= maxLength) return text;
+  return `${characters
+    .slice(0, maxLength - 1)
+    .join('')
+    .trimEnd()}…`;
+}

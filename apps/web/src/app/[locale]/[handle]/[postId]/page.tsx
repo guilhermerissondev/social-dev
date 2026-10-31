@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
 
+import { plainExcerpt } from '@social-dev/shared';
 import { buttonClasses } from '@social-dev/ui';
 
 import { DeletePostButton } from '@/components/posts/delete-post-button.tsx';
@@ -23,15 +24,6 @@ async function postFromParams(params: Params) {
   return post;
 }
 
-/** Plain-text excerpt of the post for search engines and link previews. */
-function excerpt(content: string) {
-  const text = content
-    .replace(/[#*_`>[\]()~-]/g, '')
-    .replace(/\s+/g, ' ')
-    .trim();
-  return text.length > 160 ? `${text.slice(0, 157)}...` : text;
-}
-
 export async function generateMetadata({
   params,
 }: PageProps<'/[locale]/[handle]/[postId]'>): Promise<Metadata> {
@@ -39,7 +31,7 @@ export async function generateMetadata({
   const author = `${post.author.displayName} (@${post.author.username})`;
   return {
     title: `${post.title ?? author} · Social Dev`,
-    description: excerpt(post.content),
+    description: plainExcerpt(post.content),
   };
 }
 

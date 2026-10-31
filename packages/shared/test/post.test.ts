@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { characterCount, POST_LIMITS, postInputSchema } from '../src/index.ts';
+import { characterCount, plainExcerpt, POST_LIMITS, postInputSchema } from '../src/index.ts';
 
 describe('characterCount', () => {
   it('counts emoji and accented letters once', () => {
@@ -25,5 +25,17 @@ describe('postInputSchema', () => {
       content: 'hi',
       title: null,
     });
+  });
+});
+
+describe('plainExcerpt', () => {
+  it('strips Markdown and code blocks', () => {
+    expect(plainExcerpt('# Title\n\nSome **bold** [link](https://x.dev)\n\n```ts\ncode\n```')).toBe(
+      'Title Some bold link',
+    );
+  });
+
+  it('cuts long text without splitting characters', () => {
+    expect(plainExcerpt('👋'.repeat(10), 5)).toBe('👋👋👋👋…');
   });
 });

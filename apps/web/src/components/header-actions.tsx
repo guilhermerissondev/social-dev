@@ -6,6 +6,8 @@ import { useTranslations } from 'next-intl';
 import { Link, useRouter } from '@/i18n/navigation.ts';
 import { authClient } from '@/lib/auth-client.ts';
 
+import { NotificationsLink } from './notifications/notifications-link.tsx';
+
 /** Log in / sign up links, or the signed-in user's handle and a log out button. */
 export function HeaderActions() {
   const t = useTranslations('Header');
@@ -26,6 +28,7 @@ export function HeaderActions() {
             <Link href="/saved" className="text-sm text-zinc-300 hover:text-zinc-100">
               {t('saved')}
             </Link>
+            <NotificationsLink />
           </>
         )}
         <Link

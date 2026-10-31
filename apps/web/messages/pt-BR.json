@@ -11,7 +11,9 @@
     "logout": "Sair",
     "profile": "Seu perfil",
     "feed": "Início",
-    "saved": "Salvos"
+    "saved": "Salvos",
+    "notifications": "Notificações",
+    "notificationsUnread": "Notificações ({count, plural, one {# não lida} other {# não lidas}})"
   },
   "Home": {
     "title": "A rede social de quem desenvolve software.",
@@ -203,5 +205,13 @@
     "title": "Salvos",
     "subtitle": "Só você vê os posts que salvou.",
     "empty": "Você ainda não salvou nenhum post. Use o ícone de marcador em um post para guardá-lo aqui."
+  },
+  "Notifications": {
+    "title": "Notificações",
+    "empty": "Nenhuma notificação ainda. Quando alguém seguir você ou curtir seus posts, vai aparecer aqui.",
+    "follow": "<actor></actor> começou a seguir você",
+    "like": "<actor></actor> curtiu seu post",
+    "unread": "não lida",
+    "older": "Notificações mais antigas"
   }
 }

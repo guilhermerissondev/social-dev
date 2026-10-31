@@ -1,12 +1,12 @@
 import { schema, type Database, type Executor } from '@social-dev/db';
-import { and, desc, eq, exists, lt, sql, type SQL } from '@social-dev/db/orm';
+import { and, desc, eq, exists, inArray, lt, or, sql, type SQL } from '@social-dev/db/orm';
 import { renderMarkdown } from '@social-dev/markdown';
 import { POST_LIMITS, type PostInput } from '@social-dev/shared';
 
 import { isLocalUsername } from '../profiles/service.ts';
 import { upsertTags } from '../tags/service.ts';
 
-const { actors, posts, postTags, tags, users } = schema;
+const { actors, follows, posts, postTags, tagFollows, tags, users } = schema;
 
 export const PAGE_SIZE = 20;
 
@@ -33,7 +33,11 @@ export interface PostPage {
   nextCursor: string | null;
 }
 
-export type PostFilter = { kind: 'author'; username: string } | { kind: 'tag'; name: string };
+export type PostFilter =
+  | { kind: 'author'; username: string }
+  | { kind: 'tag'; name: string }
+  /** The "Following" feed: the actor's own posts, people they follow and tags they follow. */
+  | { kind: 'feed'; actorId: string };
 
 const postColumns = {
   id: posts.id,
@@ -168,6 +172,20 @@ function filterCondition(filter: PostFilter): SQL | undefined {
       return exists(
         sql`(select 1 from ${postTags} inner join ${tags} on ${tags.id} = ${postTags.tagId}
           where ${postTags.postId} = ${posts.id} and ${tags.name} = ${filter.name})`,
+      );
+    case 'feed':
+      // Built on read for now; precomputed timelines come when the volume asks for them
+      // (docs/plano-inicial.md, section 6.3).
+      return or(
+        eq(posts.authorId, filter.actorId),
+        inArray(
+          posts.authorId,
+          sql`(select ${follows.followeeId} from ${follows} where ${follows.followerId} = ${filter.actorId})`,
+        ),
+        exists(
+          sql`(select 1 from ${postTags} inner join ${tagFollows} on ${tagFollows.tagId} = ${postTags.tagId}
+            where ${postTags.postId} = ${posts.id} and ${tagFollows.actorId} = ${filter.actorId})`,
+        ),
       );
   }
 }

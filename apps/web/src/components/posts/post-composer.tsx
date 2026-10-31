@@ -12,7 +12,7 @@ import { PostBody } from './post-body.tsx';
 
 interface ComposerProps {
   /** When set, the composer edits this post instead of creating a new one. */
-  post?: { id: string; title: string | null; content: string };
+  post?: { id: string; title: string | null; content: string; authorUsername: string };
 }
 
 type Mode = 'write' | 'preview';
@@ -68,8 +68,15 @@ export function PostComposer({ post }: ComposerProps) {
       setError((await apiErrorCode(res)) === 'validation_error' ? 'invalid' : 'unknown');
       return;
     }
-    const saved = (await res.json()) as { id: string; author: { username: string } };
-    router.push(`/@${saved.author.username}/${saved.id}`);
+    if (post) {
+      router.push(`/@${post.authorUsername}/${post.id}`);
+    } else {
+      // New posts appear at the top of the feed below the composer.
+      setTitle('');
+      setShowTitle(false);
+      setContent('');
+      setMode('write');
+    }
     router.refresh();
   }
 

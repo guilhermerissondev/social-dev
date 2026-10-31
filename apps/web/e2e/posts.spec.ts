@@ -18,6 +18,10 @@ test('publish, read, edit and delete a post', async ({ page, request }) => {
   await page.getByRole('button', { name: 'Escrever' }).click();
   await page.getByRole('button', { name: 'Publicar' }).click();
 
+  // It shows up at the top of the feed, and the composer is cleared.
+  await expect(page.getByLabel('Conteúdo do post')).toHaveValue('');
+  await page.getByRole('link', { name: 'Hello, Social Dev' }).click();
+
   // The post page.
   await expect(page).toHaveURL(new RegExp(`/@${user.username}/[0-9a-f-]{36}$`));
   await expect(page.getByRole('heading', { name: 'Hello, Social Dev' })).toBeVisible();
@@ -55,6 +59,8 @@ test('other people see the post without edit controls', async ({ page, request, 
   await signUpAndConfirm(page, request, user);
   await page.getByLabel('Conteúdo do post').fill('A public post');
   await page.getByRole('button', { name: 'Publicar' }).click();
+  // The timestamp links to the post page.
+  await page.locator('article').filter({ hasText: 'A public post' }).locator('time').click();
   await expect(page).toHaveURL(new RegExp(`/@${user.username}/[0-9a-f-]{36}$`));
 
   const visitor = await browser.newPage();

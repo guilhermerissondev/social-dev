@@ -43,3 +43,8 @@ export function listProfilePosts(username: string, before?: string) {
 export function listTagPosts(tag: string, before?: string) {
   return fetchPage(`/api/tags/${encodeURIComponent(tag)}/posts`, before);
 }
+
+/** The signed-in user's "Following" feed. */
+export function getFeed(before?: string) {
+  return fetchPage('/api/feed', before);
+}

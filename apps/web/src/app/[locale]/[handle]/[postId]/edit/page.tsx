@@ -18,7 +18,14 @@ export default async function EditPostPage({
   return (
     <div className="mx-auto max-w-2xl px-6 py-12">
       <h1 className="mb-6 text-2xl font-bold tracking-tight">{t('editTitle')}</h1>
-      <PostComposer post={{ id: post.id, title: post.title, content: post.content }} />
+      <PostComposer
+        post={{
+          id: post.id,
+          title: post.title,
+          content: post.content,
+          authorUsername: post.author.username,
+        }}
+      />
     </div>
   );
 }

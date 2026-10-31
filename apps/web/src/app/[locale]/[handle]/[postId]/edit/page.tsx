@@ -24,6 +24,7 @@ export default async function EditPostPage({
           title: post.title,
           content: post.content,
           authorUsername: post.author.username,
+          isReply: post.threadId !== null,
         }}
       />
     </div>

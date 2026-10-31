@@ -12,6 +12,9 @@ export interface Post {
   author: { id: string; username: string; displayName: string; avatarUrl: string | null };
   createdAt: string;
   editedAt: string | null;
+  replyTo: { id: string; authorUsername: string } | null;
+  threadId: string | null;
+  repliesCount: number;
   likesCount: number;
   likedByViewer: boolean;
   bookmarkedByViewer: boolean;
@@ -58,4 +61,11 @@ export async function getBookmarks(cursor?: string): Promise<PostPage> {
   const res = await apiFetch(`/api/me/bookmarks${query}`);
   if (!res.ok) throw new Error(`failed to load bookmarks: ${res.status}`);
   return (await res.json()) as PostPage;
+}
+
+/** Replies in the conversation started by `rootId`, oldest first. */
+export async function getThread(rootId: string): Promise<Post[]> {
+  const res = await apiFetch(`/api/posts/${encodeURIComponent(rootId)}/thread`);
+  if (!res.ok) throw new Error(`failed to load thread: ${res.status}`);
+  return ((await res.json()) as { items: Post[] }).items;
 }

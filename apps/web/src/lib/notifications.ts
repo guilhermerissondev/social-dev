@@ -4,7 +4,7 @@ import { apiFetch } from './api.ts';
 
 export interface Notification {
   id: string;
-  type: 'follow' | 'like';
+  type: 'follow' | 'like' | 'reply';
   read: boolean;
   createdAt: string;
   actor: { username: string; displayName: string; avatarUrl: string | null };

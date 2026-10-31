@@ -8,6 +8,9 @@ import { Link } from '@/i18n/navigation.ts';
 
 export interface PostActionsProps {
   postId: string;
+  /** The post page, where the conversation is. */
+  postHref: `/@${string}/${string}`;
+  repliesCount: number;
   likesCount: number;
   liked: boolean;
   bookmarked: boolean;
@@ -29,6 +32,21 @@ function HeartIcon({ filled }: { filled: boolean }) {
         d="M12 20s-7-4.35-7-10a4 4 0 0 1 7-2.65A4 4 0 0 1 19 10c0 5.65-7 10-7 10Z"
         strokeLinejoin="round"
       />
+    </svg>
+  );
+}
+
+function CommentIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden
+      className="size-5"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
+      <path d="M4 5h16v11H9l-5 4V5Z" strokeLinejoin="round" />
     </svg>
   );
 }
@@ -71,6 +89,8 @@ function useToggle(initial: boolean, apiPath: string) {
 
 export function PostActions({
   postId,
+  postHref,
+  repliesCount,
   likesCount,
   liked,
   bookmarked,
@@ -114,6 +134,10 @@ export function PostActions({
 
   return (
     <div className="mt-3 flex gap-2">
+      <Link href={postHref} aria-label={t('comments')} className={actionClasses}>
+        <CommentIcon />
+        <span className="tabular-nums">{format.number(repliesCount)}</span>
+      </Link>
       {action(
         t('like'),
         like.on,

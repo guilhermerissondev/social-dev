@@ -159,7 +159,10 @@
     "edit": "Edit",
     "delete": "Delete",
     "confirmDelete": "Delete this post? This cannot be undone.",
-    "deleteFailed": "Could not delete the post. Try again."
+    "deleteFailed": "Could not delete the post. Try again.",
+    "inReplyTo": "Replying to <link>@{username}</link>",
+    "comments": "{count, plural, =0 {Comments} one {# comment} other {# comments}}",
+    "loginToComment": "Log in to comment"
   },
   "Composer": {
     "title": "Title",
@@ -178,7 +181,10 @@
       "tooLong": "Posts can have at most {max} characters.",
       "invalid": "Check the post and try again.",
       "unknown": "Something went wrong. Try again."
-    }
+    },
+    "reply": "Reply",
+    "replyPlaceholder": "Write a reply",
+    "replyContent": "Reply content"
   },
   "Tag": {
     "noPosts": "No posts with this tag yet.",
@@ -199,7 +205,8 @@
   },
   "PostActions": {
     "like": "Like",
-    "bookmark": "Save"
+    "bookmark": "Save",
+    "comments": "Comments"
   },
   "Saved": {
     "title": "Saved",
@@ -212,6 +219,11 @@
     "follow": "<actor></actor> followed you",
     "like": "<actor></actor> liked your post",
     "unread": "unread",
-    "older": "Older notifications"
+    "older": "Older notifications",
+    "reply": "<actor></actor> replied to your post"
+  },
+  "Thread": {
+    "reply": "Reply",
+    "replyTo": "Reply to @{username}"
   }
 }

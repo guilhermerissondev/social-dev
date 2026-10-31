@@ -22,27 +22,46 @@ export function postPath(post: Pick<Post, 'id' | 'author'>) {
 }
 
 /**
- * A post with its author. In lists (`full` false) long posts are collapsed; on the post
- * page they show in full and the title is the page heading.
+ * A post with its author.
+ * - `list`: in feeds and lists; long posts are collapsed.
+ * - `page`: the post page; shown in full, the title is the page heading.
+ * - `reply`: inside a conversation; compact, long replies are collapsed.
  */
 export function PostCard({
   post,
   fallbackHref,
-  full = false,
+  variant = 'list',
 }: {
   post: Post;
   /** Where Like and Save send viewers who cannot use them; see `actionFallbackHref`. */
   fallbackHref: '/login' | '/welcome' | null;
-  full?: boolean;
+  variant?: 'list' | 'page' | 'reply';
 }) {
   const t = useTranslations('Post');
   const format = useFormatter();
+  const full = variant === 'page';
   const collapsed = !full && isLong(post.content);
   const TitleTag = full ? 'h1' : 'h2';
   const profilePath = `/@${post.author.username}` as const;
 
   return (
-    <article className="border-b border-zinc-800 py-6">
+    <article className={variant === 'reply' ? 'py-3' : 'border-b border-zinc-800 py-6'}>
+      {/* In a conversation the tree already shows what a reply answers. */}
+      {post.replyTo && variant !== 'reply' && (
+        <p className="mb-3 text-sm text-zinc-500">
+          {t.rich('inReplyTo', {
+            username: post.replyTo.authorUsername,
+            link: (chunks) => (
+              <Link
+                href={`/@${post.replyTo?.authorUsername ?? ''}/${post.replyTo?.id ?? ''}`}
+                className="text-emerald-400 hover:underline"
+              >
+                {chunks}
+              </Link>
+            ),
+          })}
+        </p>
+      )}
       <header className="flex items-center gap-3">
         <Avatar name={post.author.displayName} url={post.author.avatarUrl} />
         <div className="min-w-0 text-sm">
@@ -86,6 +105,8 @@ export function PostCard({
       )}
       <PostActions
         postId={post.id}
+        postHref={postPath(post)}
+        repliesCount={post.repliesCount}
         likesCount={post.likesCount}
         liked={post.likedByViewer}
         bookmarked={post.bookmarkedByViewer}

@@ -1,8 +1,9 @@
 import { schema, type Database, type Executor } from '@social-dev/db';
-import { and, desc, eq, exists, isNull, lt, sql, type SQL } from '@social-dev/db/orm';
+import { and, desc, eq, exists, lt, sql, type SQL } from '@social-dev/db/orm';
 import { renderMarkdown } from '@social-dev/markdown';
 import { POST_LIMITS, type PostInput } from '@social-dev/shared';
 
+import { isLocalUsername } from '../profiles/service.ts';
 import { upsertTags } from '../tags/service.ts';
 
 const { actors, posts, postTags, tags, users } = schema;
@@ -162,10 +163,7 @@ export async function getPost(db: Database, postId: string): Promise<PostView | 
 function filterCondition(filter: PostFilter): SQL | undefined {
   switch (filter.kind) {
     case 'author':
-      return and(
-        isNull(actors.domain),
-        eq(sql`lower(${actors.username})`, filter.username.toLowerCase()),
-      );
+      return isLocalUsername(filter.username);
     case 'tag':
       return exists(
         sql`(select 1 from ${postTags} inner join ${tags} on ${tags.id} = ${postTags.tagId}

@@ -1,9 +1,13 @@
 import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi';
 import { updateProfileSchema, usernameSchema } from '@social-dev/shared';
 
+import type { Context } from 'hono';
+
 import type { AppEnv } from '../../app.ts';
+import { viewerActorId } from '../../auth/actor.ts';
 import { currentUser, requireSession } from '../../auth/session.ts';
 import { AppError } from '../../errors.ts';
+import { getFollowStats } from '../social-graph/service.ts';
 import { claimUsername, ensureLocalActor, getLocalProfile, updateProfile } from './service.ts';
 
 const ProfileSchema = z
@@ -17,6 +21,9 @@ const ProfileSchema = z
     technologies: z.array(z.string()),
     avatarUrl: z.string().nullable(),
     createdAt: z.iso.datetime(),
+    followersCount: z.number().int(),
+    followingCount: z.number().int(),
+    followedByViewer: z.boolean().openapi({ description: 'False when not signed in' }),
   })
   .openapi('Profile');
 
@@ -64,10 +71,11 @@ const claimUsernameRoute = createRoute({
   },
 });
 
-async function loadProfile(c: { var: AppEnv['Variables'] }, username: string) {
+async function loadProfile(c: Context<AppEnv>, username: string) {
   const profile = await getLocalProfile(c.var.deps.db, username);
   if (!profile) throw new AppError(404, 'not_found', 'Profile not found');
-  return profile;
+  const stats = await getFollowStats(c.var.deps.db, profile.id, await viewerActorId(c));
+  return { ...profile, ...stats };
 }
 
 export const profileRoutes = new OpenAPIHono<AppEnv>()

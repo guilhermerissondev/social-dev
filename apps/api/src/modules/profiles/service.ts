@@ -1,10 +1,21 @@
 import { schema, type Database, type Executor } from '@social-dev/db';
-import { and, asc, eq, isNull, sql } from '@social-dev/db/orm';
+import { and, asc, eq, isNull, sql, type SQL } from '@social-dev/db/orm';
 import { normalizeTag, PROFILE_LIMITS, type UpdateProfileInput } from '@social-dev/shared';
 
 import { upsertTags } from '../tags/service.ts';
 
 const { actors, actorTechnologies, tags, users } = schema;
+
+/** Matches the local actor with this handle, ignoring case. */
+export function isLocalUsername(username: string): SQL | undefined {
+  return and(isNull(actors.domain), eq(sql`lower(${actors.username})`, username.toLowerCase()));
+}
+
+/** Id of the local actor with this handle, or null. */
+export async function findLocalActorId(db: Executor, username: string): Promise<string | null> {
+  const [row] = await db.select({ id: actors.id }).from(actors).where(isLocalUsername(username));
+  return row?.id ?? null;
+}
 
 export interface Profile {
   id: string;
@@ -90,7 +101,7 @@ export async function getLocalProfile(db: Database, username: string): Promise<P
     })
     .from(actors)
     .innerJoin(users, eq(users.id, actors.userId))
-    .where(and(isNull(actors.domain), eq(sql`lower(${actors.username})`, username.toLowerCase())));
+    .where(isLocalUsername(username));
   if (!row) return null;
 
   const technologies = await db

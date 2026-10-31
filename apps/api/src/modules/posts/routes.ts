@@ -4,9 +4,9 @@ import { normalizeTag, postContentSchema, postInputSchema } from '@social-dev/sh
 import type { Context } from 'hono';
 
 import type { AppEnv } from '../../app.ts';
-import { currentUser, requireSession } from '../../auth/session.ts';
+import { requireActorId } from '../../auth/actor.ts';
+import { requireSession } from '../../auth/session.ts';
 import { AppError } from '../../errors.ts';
-import { findActorIdByUser } from '../profiles/service.ts';
 import {
   createPost,
   deletePost,
@@ -132,13 +132,6 @@ const routes = {
   }),
 };
 
-/** The signed-in user's actor id. Accounts must choose a username before posting. */
-async function currentActorId(c: Context<AppEnv>): Promise<string> {
-  const actorId = await findActorIdByUser(c.var.deps.db, currentUser(c).id);
-  if (!actorId) throw new AppError(409, 'username_required', 'Choose a username first');
-  return actorId;
-}
-
 function assertOwner(result: OwnPostResult) {
   if (result === 'not_found') throw new AppError(404, 'not_found', 'Post not found');
   if (result === 'forbidden') {
@@ -154,7 +147,7 @@ async function loadPost(c: Context<AppEnv>, id: string) {
 
 export const postRoutes = new OpenAPIHono<AppEnv>()
   .openapi(routes.create, async (c) => {
-    const id = await createPost(c.var.deps.db, await currentActorId(c), c.req.valid('json'));
+    const id = await createPost(c.var.deps.db, await requireActorId(c), c.req.valid('json'));
     return c.json(await loadPost(c, id), 201);
   })
   .openapi(routes.preview, (c) => {
@@ -165,12 +158,12 @@ export const postRoutes = new OpenAPIHono<AppEnv>()
   })
   .openapi(routes.update, async (c) => {
     const { id } = c.req.valid('param');
-    assertOwner(await updatePost(c.var.deps.db, id, await currentActorId(c), c.req.valid('json')));
+    assertOwner(await updatePost(c.var.deps.db, id, await requireActorId(c), c.req.valid('json')));
     return c.json(await loadPost(c, id), 200);
   })
   .openapi(routes.delete, async (c) => {
     const { id } = c.req.valid('param');
-    assertOwner(await deletePost(c.var.deps.db, id, await currentActorId(c)));
+    assertOwner(await deletePost(c.var.deps.db, id, await requireActorId(c)));
     return c.body(null, 204);
   })
   .openapi(routes.byAuthor, async (c) => {

@@ -4,6 +4,7 @@ import type { Area, Seniority } from '@social-dev/shared';
 import { cache } from 'react';
 
 import { apiFetch } from './api.ts';
+import type { PinnedRepo } from './github.ts';
 
 export interface Profile {
   id: string;
@@ -20,6 +21,8 @@ export interface Profile {
   followersCount: number;
   followingCount: number;
   followedByViewer: boolean;
+  /** Only when the owner chose to show it. */
+  github: { login: string; pinnedRepos: PinnedRepo[] } | null;
 }
 
 export interface ProfileSummary {

@@ -26,6 +26,7 @@ const routes = [
   '/saved',
   '/notifications',
   '/settings/profile',
+  '/settings/github',
   '/tags/warmup',
   '/@warmup',
   '/@warmup/followers',

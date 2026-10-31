@@ -352,20 +352,26 @@ social-dev/
 - [x] Idioma: código e commits em inglês, docs de produto em português
 - [x] Branch `master` renomeada para `main`
 - [x] README, LICENSE, `.gitignore`, `SECURITY.md`
-- [ ] Publicar no GitHub
+- [ ] Publicar no GitHub (e trocar `OWNER` no badge do README)
 
-### 10.2 M1 em ordem de execução
+### 10.2 M1: entregue
 
-Cada item é um PR pequeno, revisado e com CI verde antes do merge.
+1. [x] **Monorepo:** pnpm workspaces, Turborepo, TypeScript estrito, ESLint, Prettier, Node 24 fixado (`.nvmrc`/`engines`).
+2. [x] **Convenções:** Conventional Commits (commitlint), pre-commit com lint-staged, EditorConfig.
+3. [x] **CI:** GitHub Actions com formatação, lint, typecheck, testes, E2E e varredura de segredos (gitleaks). Dependabot.
+4. [x] **Ambiente local:** Docker Compose com PostgreSQL 18 e Mailpit. Variáveis de ambiente validadas com Zod.
+5. [x] **Banco:** pacote `db` com Drizzle, IDs UUIDv7 gerados pelo PostgreSQL, migrações, testes com Testcontainers.
+6. [x] **API:** Hono com healthcheck, logs estruturados (pino), request id, erros padronizados e documento OpenAPI.
+7. [x] **Web:** Next.js 16 com i18n (pt-BR sem prefixo, `/en`), Tailwind CSS 4 e pacote `ui`.
+8. [x] **Autenticação:** cadastro com e-mail e senha (confirmação obrigatória), login por e-mail ou nome de usuário, recuperação de senha, GitHub e GitLab (quando configurados), vínculo de contas, rate limiting.
+9. [x] **E2E:** Playwright cobrindo cadastro, confirmação de e-mail, login, logout, senha errada e recuperação de senha.
 
-1. **Monorepo:** pnpm workspaces, Turborepo, TypeScript estrito, ESLint, Prettier, versão do Node fixada (`.nvmrc`/`engines`).
-2. **Convenções:** Conventional Commits (com commitlint), hooks de pre-commit (lint-staged), EditorConfig.
-3. **CI:** GitHub Actions com lint, typecheck, testes e varredura de segredos (gitleaks). Badges no README.
-4. **Ambiente local:** `docker-compose.yml` com PostgreSQL e Mailpit. Validação de variáveis de ambiente com Zod na inicialização.
-5. **Banco:** pacote `db` com Drizzle, primeira migração, testes de integração com Testcontainers.
-6. **API:** app Hono com healthcheck, logs estruturados, tratamento de erros padronizado e contrato OpenAPI.
-7. **Web:** app Next.js com i18n (pt-BR), layout base e pacote `ui` inicial.
-8. **Autenticação:** Better Auth com e-mail e senha (verificação via Mailpit), GitHub e GitLab, vínculo de contas, rate limiting no cadastro.
-9. **E2E:** Playwright cobrindo cadastro, login e logout.
+Ficou para depois (anotado para os próximos marcos):
 
-Ao fim do M1: dá para clonar o repositório, rodar um comando, criar conta e entrar. Tudo testado no CI.
+- **CAPTCHA no cadastro** (Cloudflare Turnstile) e **bloqueio de e-mails descartáveis:** entram antes do beta (M7), quando houver domínio e chaves.
+- **IP real do cliente:** o proxy do Next.js em desenvolvimento não repassa o IP de quem acessa, então localmente todas as requisições dividem o mesmo limite de tentativas. Em produção, o proxy da frente (Cloudflare ou load balancer) precisa informar o IP real, configurado em `CLIENT_IP_HEADER`, e a API não pode ficar acessível diretamente. Decisão de infraestrutura do M7.
+- **E-mails em inglês:** os templates estão só em português até o idioma do usuário ser salvo no perfil.
+
+### 10.3 Próximo: M2 (núcleo social local)
+
+Perfil técnico, posts em Markdown, seguir pessoas e tags, feed "Seguindo".

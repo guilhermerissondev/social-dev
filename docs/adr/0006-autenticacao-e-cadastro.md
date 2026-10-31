@@ -28,3 +28,4 @@ A rede é voltada para devs, mas não deve exigir conta no GitHub ou GitLab para
 - Mais superfície de ataque do que só OAuth (senhas, recuperação, enumeração de e-mails). Respostas de login e recuperação não podem revelar se um e-mail existe.
 - Spam fica mais fácil que em cadastro só via GitHub; a moderação e o selo de conta vinculada ao GitHub/GitLab ganham importância.
 - Envio de e-mail é necessário desde o M1 (Mailpit local; provedor transacional quando houver deploy).
+- O rate limiting depende do IP real do cliente. Em produção, o proxy reverso na frente da API informa o IP em um cabeçalho confiável (`CLIENT_IP_HEADER`) e a API não fica exposta diretamente.

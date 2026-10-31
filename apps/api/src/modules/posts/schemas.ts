@@ -16,6 +16,16 @@ export const PostSchema = z
     author: AuthorSchema,
     createdAt: z.iso.datetime(),
     editedAt: z.iso.datetime().nullable(),
+    replyTo: z
+      .object({ id: z.uuid(), authorUsername: z.string() })
+      .nullable()
+      .openapi({ description: 'The post this one answers, if it still exists' }),
+    threadId: z.uuid().nullable().openapi({
+      description: 'First post of the conversation, for replies. Null for top-level posts.',
+    }),
+    repliesCount: z.number().int().openapi({
+      description: 'Replies in the conversation (top-level posts) or direct replies (replies)',
+    }),
     likesCount: z.number().int(),
     likedByViewer: z.boolean().openapi({ description: 'False when not signed in' }),
     bookmarkedByViewer: z.boolean().openapi({ description: 'False when not signed in' }),

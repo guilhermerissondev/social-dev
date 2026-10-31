@@ -24,9 +24,19 @@ export async function signUp(page: Page, user: User) {
   await expect(page.getByRole('heading', { name: 'Confira seu e-mail' })).toBeVisible();
 }
 
-/** Signs up through the form and follows the confirmation link, ending signed in on /home. */
+/**
+ * Signs up through the form, follows the confirmation link and skips onboarding through the
+ * API (onboarding.spec.ts covers it), ending signed in on /home.
+ */
 export async function signUpAndConfirm(page: Page, request: APIRequestContext, user: User) {
   await signUp(page, user);
   await page.goto(await latestLinkSentTo(request, user.email));
+  await expect(page).toHaveURL(/\/onboarding$/);
+  // page.request shares the page's cookies, so this acts as the new account.
+  const res = await page.request.post('/api/me/onboarding/complete', {
+    headers: { origin: 'http://localhost:3000' },
+  });
+  expect(res.ok()).toBe(true);
+  await page.goto('/home');
   await expect(page).toHaveURL(/\/home$/);
 }

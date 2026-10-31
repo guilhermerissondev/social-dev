@@ -108,7 +108,8 @@
   "Feed": {
     "title": "Olá, {name}!",
     "following": "Seguindo",
-    "empty": "Seu feed está vazio. Siga pessoas e tags, ou comece pelo <explore>Explorar</explore>, e os posts aparecem aqui."
+    "empty": "Seu feed está vazio. Siga pessoas e tags, ou comece pelo <explore>Explorar</explore>, e os posts aparecem aqui.",
+    "whoToFollow": "Quem seguir"
   },
   "Profile": {
     "edit": "Editar perfil",
@@ -308,5 +309,30 @@
     "empty": "Ninguém encontrado com esses filtros.",
     "more": "Ver mais",
     "followers": "{count, plural, =0 {sem seguidores} one {# seguidor} other {# seguidores}}"
+  },
+  "Onboarding": {
+    "title": "Primeiros passos",
+    "progress": "Passo {step} de {total}",
+    "profileTitle": "Conte sobre você",
+    "profileSubtitle": "Sua stack e sua área ajudam a encontrar gente parecida com você. Tudo é opcional.",
+    "tagsTitle": "Tags para seguir",
+    "tagsSubtitle": "Posts com essas tags aparecem no seu feed. As da sua stack já vêm marcadas.",
+    "peopleTitle": "Pessoas para seguir",
+    "peopleSubtitle": "Sugestões pela sua stack e por quem você já segue.",
+    "technologies": "Tecnologias que você usa",
+    "technologiesHint": "Separadas por vírgula. Letras, números e _ (ex.: cpp, csharp, nodejs).",
+    "notSaying": "Prefiro não informar",
+    "invalidTechnologies": "Estas tecnologias não são válidas: {detail}.",
+    "saveFailed": "Não foi possível salvar. Tente de novo.",
+    "noTags": "Ainda não há tags para sugerir. Você pode seguir tags depois, pela página de cada uma.",
+    "noPeople": "Ainda não temos sugestões. Você pode encontrar pessoas no diretório.",
+    "continue": "Continuar",
+    "skip": "Pular esta etapa",
+    "finish": "Ir para o feed"
+  },
+  "Suggestions": {
+    "sharedStack": "Também usa {tags}",
+    "followedByFollowing": "{count, plural, one {Seguido por # pessoa que você segue} other {Seguido por # pessoas que você segue}}",
+    "followLabel": "Seguir @{username}"
   }
 }

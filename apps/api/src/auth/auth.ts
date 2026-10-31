@@ -102,6 +102,13 @@ export function createAuth({ db, env, mailer, logger, rateLimit = true }: AuthDe
         trustedProviders: ['github', 'gitlab'],
       },
     },
+    user: {
+      additionalFields: {
+        // Exposed on the session so the web app can send new accounts to onboarding
+        // without another request. Only the API sets it.
+        onboardingCompletedAt: { type: 'date', required: false, input: false },
+      },
+    },
     databaseHooks: {
       user: {
         create: {

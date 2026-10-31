@@ -11,6 +11,8 @@ export interface SessionUser {
   username: string | null;
   displayUsername: string | null;
   image: string | null;
+  /** Null until the person finishes or skips onboarding. */
+  onboardingCompletedAt: string | null;
 }
 
 /** The signed-in user for the current request, or null. Cached per request. */

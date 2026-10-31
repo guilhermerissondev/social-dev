@@ -39,3 +39,12 @@ export async function requireUserWithUsername(): Promise<UserWithUsername> {
     displayUsername: user.displayUsername ?? user.username,
   };
 }
+
+/** Like `requireUserWithUsername`, but also sends new accounts through onboarding first. */
+export async function requireOnboardedUser(): Promise<UserWithUsername> {
+  const user = await requireUserWithUsername();
+  if (!user.onboardingCompletedAt) {
+    return redirect({ href: '/onboarding', locale: await getLocale() });
+  }
+  return user;
+}

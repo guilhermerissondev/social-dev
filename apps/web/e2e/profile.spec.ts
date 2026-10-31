@@ -62,6 +62,6 @@ test('accounts without a username choose one before using the site', async ({ pa
   await page.getByLabel('Nome de usuário').fill(user.username);
   await page.getByRole('button', { name: 'Continuar' }).click();
 
-  await expect(page).toHaveURL(/\/home$/);
+  await expect(page).toHaveURL(/\/onboarding$/);
   await expect(page.getByRole('link', { name: `@${user.username}` })).toBeVisible();
 });

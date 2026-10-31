@@ -15,6 +15,7 @@
     "@hono/node-server": "^2.1.5",
     "@hono/zod-openapi": "^1.6.3",
     "@social-dev/db": "workspace:*",
+    "@social-dev/markdown": "workspace:*",
     "@social-dev/shared": "workspace:*",
     "better-auth": "^1.7.14",
     "hono": "^4.13.14",

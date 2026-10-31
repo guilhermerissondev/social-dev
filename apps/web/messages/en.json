@@ -13,7 +13,8 @@
     "feed": "Home",
     "saved": "Saved",
     "notifications": "Notifications",
-    "notificationsUnread": "Notifications ({count, plural, one {# unread} other {# unread}})"
+    "notificationsUnread": "Notifications ({count, plural, one {# unread} other {# unread}})",
+    "explore": "Explore"
   },
   "Home": {
     "title": "The social network for people who build software.",
@@ -107,7 +108,7 @@
   "Feed": {
     "title": "Hi, {name}!",
     "following": "Following",
-    "empty": "Your feed is empty. Follow people and tags (open a #tag on any post) and their posts show up here."
+    "empty": "Your feed is empty. Follow people and tags, or start with <explore>Explore</explore>, and their posts show up here."
   },
   "Profile": {
     "edit": "Edit profile",
@@ -229,5 +230,20 @@
   "Thread": {
     "reply": "Reply",
     "replyTo": "Reply to @{username}"
+  },
+  "Explore": {
+    "title": "Explore",
+    "subtitle": "The posts that got Social Dev talking.",
+    "periods": {
+      "day": "Today",
+      "week": "This week",
+      "month": "This month"
+    },
+    "periodLabel": "Period",
+    "trending": "Trending tags",
+    "filteringBy": "Filtering by <tag></tag>",
+    "clearFilter": "Show all",
+    "empty": "No posts in this period yet.",
+    "more": "Show more"
   }
 }

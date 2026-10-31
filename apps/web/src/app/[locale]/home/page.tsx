@@ -2,6 +2,7 @@ import { getTranslations } from 'next-intl/server';
 
 import { PostComposer } from '@/components/posts/post-composer.tsx';
 import { PostList } from '@/components/posts/post-list.tsx';
+import { Link } from '@/i18n/navigation.ts';
 import { requireUserWithUsername } from '@/lib/guards.ts';
 import { queryValue } from '@/lib/handles.ts';
 import { getFeed } from '@/lib/posts.ts';
@@ -27,7 +28,13 @@ export default async function HomeFeedPage({ searchParams }: PageProps<'/[locale
         <PostList
           page={feed}
           olderHref={(cursor) => `?before=${cursor}`}
-          empty={t('empty')}
+          empty={t.rich('empty', {
+            explore: (chunks) => (
+              <Link href="/explore" className="text-emerald-400 hover:underline">
+                {chunks}
+              </Link>
+            ),
+          })}
           // Signed in with a username: the guard above guarantees it.
           fallbackHref={null}
         />

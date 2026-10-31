@@ -12,13 +12,23 @@ import { PostBody } from './post-body.tsx';
 
 interface ComposerProps {
   /** When set, the composer edits this post instead of creating a new one. */
-  post?: { id: string; title: string | null; content: string; authorUsername: string };
+  post?: {
+    id: string;
+    title: string | null;
+    content: string;
+    authorUsername: string;
+    isReply: boolean;
+  };
+  /** When set, publishes a reply to this post. */
+  replyToId?: string;
+  /** Called after a new post or reply is published. */
+  onPublished?: () => void;
 }
 
 type Mode = 'write' | 'preview';
 type FormError = 'tooLong' | 'invalid' | 'unknown';
 
-export function PostComposer({ post }: ComposerProps) {
+export function PostComposer({ post, replyToId, onPublished }: ComposerProps) {
   const t = useTranslations('Composer');
   const format = useFormatter();
   const router = useRouter();
@@ -27,6 +37,8 @@ export function PostComposer({ post }: ComposerProps) {
   const [showTitle, setShowTitle] = useState(Boolean(post?.title));
   const [content, setContent] = useState(post?.content ?? '');
   const [mode, setMode] = useState<Mode>('write');
+  // Replies have no title (they federate as plain notes).
+  const canHaveTitle = !replyToId && !post?.isReply;
   const [previewHtml, setPreviewHtml] = useState('');
   const [error, setError] = useState<FormError | null>(null);
   const [pending, setPending] = useState(false);
@@ -60,7 +72,11 @@ export function PostComposer({ post }: ComposerProps) {
     const res = await fetch(post ? `/api/posts/${post.id}` : '/api/posts', {
       method: post ? 'PUT' : 'POST',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ title: showTitle ? title : null, content }),
+      body: JSON.stringify({
+        title: canHaveTitle && showTitle ? title : null,
+        content,
+        ...(replyToId && { replyToId }),
+      }),
     });
     setPending(false);
 
@@ -76,6 +92,7 @@ export function PostComposer({ post }: ComposerProps) {
       setShowTitle(false);
       setContent('');
       setMode('write');
+      onPublished?.();
     }
     router.refresh();
   }
@@ -94,7 +111,7 @@ export function PostComposer({ post }: ComposerProps) {
         </Alert>
       )}
 
-      {showTitle && (
+      {canHaveTitle && showTitle && (
         <Field
           label={t('title')}
           name="title"
@@ -127,7 +144,7 @@ export function PostComposer({ post }: ComposerProps) {
             {t('preview')}
           </button>
         </div>
-        {!showTitle && (
+        {canHaveTitle && !showTitle && (
           <button
             type="button"
             className="text-sm text-zinc-400 hover:text-zinc-100"
@@ -143,7 +160,7 @@ export function PostComposer({ post }: ComposerProps) {
       {mode === 'write' ? (
         <>
           <label htmlFor={contentId} className="sr-only">
-            {t('content')}
+            {replyToId ? t('replyContent') : t('content')}
           </label>
           <Textarea
             id={contentId}
@@ -152,9 +169,9 @@ export function PostComposer({ post }: ComposerProps) {
             onChange={(event) => {
               setContent(event.target.value);
             }}
-            rows={post ? 16 : 5}
+            rows={post ? 16 : replyToId ? 3 : 5}
             required
-            placeholder={t('placeholder')}
+            placeholder={replyToId ? t('replyPlaceholder') : t('placeholder')}
             className="font-mono"
           />
         </>
@@ -173,7 +190,7 @@ export function PostComposer({ post }: ComposerProps) {
             {format.number(count)} / {format.number(POST_LIMITS.content)}
           </span>
           <Button type="submit" disabled={pending || !content.trim()}>
-            {post ? t('save') : t('publish')}
+            {post ? t('save') : replyToId ? t('reply') : t('publish')}
           </Button>
         </div>
       </div>

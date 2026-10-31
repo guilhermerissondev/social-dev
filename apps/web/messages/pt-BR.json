@@ -159,7 +159,10 @@
     "edit": "Editar",
     "delete": "Excluir",
     "confirmDelete": "Excluir este post? Não dá para desfazer.",
-    "deleteFailed": "Não foi possível excluir o post. Tente de novo."
+    "deleteFailed": "Não foi possível excluir o post. Tente de novo.",
+    "inReplyTo": "Em resposta a <link>@{username}</link>",
+    "comments": "{count, plural, =0 {Comentários} one {# comentário} other {# comentários}}",
+    "loginToComment": "Entre para comentar"
   },
   "Composer": {
     "title": "Título",
@@ -178,7 +181,10 @@
       "tooLong": "O post pode ter no máximo {max} caracteres.",
       "invalid": "Confira o post e tente de novo.",
       "unknown": "Algo deu errado. Tente de novo."
-    }
+    },
+    "reply": "Responder",
+    "replyPlaceholder": "Escreva uma resposta",
+    "replyContent": "Conteúdo da resposta"
   },
   "Tag": {
     "noPosts": "Nenhum post com esta tag ainda.",
@@ -199,7 +205,8 @@
   },
   "PostActions": {
     "like": "Curtir",
-    "bookmark": "Salvar"
+    "bookmark": "Salvar",
+    "comments": "Comentários"
   },
   "Saved": {
     "title": "Salvos",
@@ -212,6 +219,11 @@
     "follow": "<actor></actor> começou a seguir você",
     "like": "<actor></actor> curtiu seu post",
     "unread": "não lida",
-    "older": "Notificações mais antigas"
+    "older": "Notificações mais antigas",
+    "reply": "<actor></actor> respondeu seu post"
+  },
+  "Thread": {
+    "reply": "Responder",
+    "replyTo": "Responder a @{username}"
   }
 }

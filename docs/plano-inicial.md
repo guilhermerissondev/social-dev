@@ -389,6 +389,6 @@ Um PR por etapa. As notificações vêm cedo para que cada etapa seguinte já tr
 
 1. [x] **Curtidas e salvos:** curtir e salvar posts, contador de curtidas, página "Salvos" e links "Início" e "Salvos" no cabeçalho. Curtidas são públicas (viram `Like` no M5); salvos são privados e nunca federam.
 2. [x] **Notificações in-app:** novos seguidores e curtidas, contador de não lidas no cabeçalho, página de notificações. Gravadas na mesma transação da ação; repetir a ação não notifica de novo, e desfazê-la remove a notificação. Abrir a página marca como lidas só as que foram exibidas. Atualização em tempo real e o resumo por e-mail ficam para depois.
-3. [ ] **Comentários com respostas:** comentários são posts que respondem a outro post (no ActivityPub, `inReplyTo`), com conversa em árvore na página do post.
+3. [x] **Comentários com respostas:** comentários são posts que respondem a outro (`replyToId`, o `inReplyTo` do ActivityPub) e guardam o início da conversa (`threadId`). A página do post mostra a conversa em árvore e permite responder em qualquer nível; o recuo para no 4º nível para o texto continuar legível. Respostas não aparecem no feed nem nas listas, não têm título e notificam o autor do post respondido. Se um post é excluído, as respostas a ele continuam na conversa, como no fediverso. Conversas carregam até 500 respostas; paginação quando houver conversas desse tamanho.
 4. [ ] **Repostagens:** repostar posts (`Announce`), que entram no feed de quem segue quem repostou.
 5. [ ] **Menções:** `@usuario` vira link e notifica a pessoa mencionada.

@@ -40,6 +40,7 @@ test('publish, read, edit and delete a post', async ({ page, request }) => {
   // Edit.
   await page.goto(postUrl);
   await page.getByRole('link', { name: 'Editar', exact: true }).click();
+  await expect(page.getByRole('heading', { name: 'Editar post' })).toBeVisible();
   await page.getByLabel('Conteúdo do post').fill('Edited content');
   await page.getByRole('button', { name: 'Salvar' }).click();
   await expect(page).toHaveURL(postUrl);

@@ -12,6 +12,7 @@ import {
   deletePost,
   getPost,
   listPosts,
+  listThread,
   updatePost,
   type OwnPostResult,
 } from './service.ts';
@@ -36,13 +37,36 @@ const routes = {
     method: 'post',
     path: '/api/posts',
     tags: ['Posts'],
-    summary: 'Publish a post',
+    summary: 'Publish a post, or reply to one with `replyToId`',
     middleware: [requireSession] as const,
-    request: { body: { required: true, content: json(postInputSchema) } },
+    request: {
+      body: {
+        required: true,
+        content: json(
+          postInputSchema.extend({
+            replyToId: z.uuid().optional().openapi({ description: 'Post being answered' }),
+          }),
+        ),
+      },
+    },
     responses: {
       201: { description: 'Published post', content: json(PostSchema) },
       ...notSignedIn,
+      404: { description: 'The post being answered does not exist' },
       409: { description: 'The account has no username yet' },
+    },
+  }),
+  thread: createRoute({
+    method: 'get',
+    path: '/api/posts/{id}/thread',
+    tags: ['Posts'],
+    summary: 'Replies in the conversation started by this post, oldest first',
+    request: { params: PostParams },
+    responses: {
+      200: {
+        description: 'Replies; build the tree from `replyTo`',
+        content: json(z.object({ items: z.array(PostSchema) })),
+      },
     },
   }),
   preview: createRoute({
@@ -138,8 +162,16 @@ async function loadPost(c: Context<AppEnv>, id: string) {
 
 export const postRoutes = new OpenAPIHono<AppEnv>()
   .openapi(routes.create, async (c) => {
-    const id = await createPost(c.var.deps.db, await requireActorId(c), c.req.valid('json'));
-    return c.json(await loadPost(c, id), 201);
+    const { replyToId, ...input } = c.req.valid('json');
+    const result = await createPost(c.var.deps.db, await requireActorId(c), input, replyToId);
+    if (result === 'parent_not_found') {
+      throw new AppError(404, 'not_found', 'The post being answered does not exist');
+    }
+    return c.json(await loadPost(c, result.id), 201);
+  })
+  .openapi(routes.thread, async (c) => {
+    const items = await listThread(c.var.deps.db, c.req.valid('param').id, await viewerActorId(c));
+    return c.json({ items }, 200);
   })
   .openapi(routes.preview, (c) => {
     return c.json({ html: renderMarkdown(c.req.valid('json').content).html }, 200);

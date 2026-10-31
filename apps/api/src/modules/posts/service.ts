@@ -1,9 +1,10 @@
 import { schema, type Database, type Executor } from '@social-dev/db';
-import { and, desc, eq, exists, inArray, lt, or, sql, type SQL } from '@social-dev/db/orm';
+import { and, desc, eq, exists, inArray, isNull, lt, or, sql, type SQL } from '@social-dev/db/orm';
 import { renderMarkdown } from '@social-dev/markdown';
 import { POST_LIMITS, type PostInput } from '@social-dev/shared';
 
 import { decodeCursor, encodeCursor } from '../../lib/cursor.ts';
+import { notify } from '../notifications/service.ts';
 import { isLocalUsername } from '../profiles/service.ts';
 import { upsertTags } from '../tags/service.ts';
 
@@ -26,6 +27,12 @@ export interface PostView {
   };
   createdAt: string;
   editedAt: string | null;
+  /** The post this one answers, if it still exists. */
+  replyTo: { id: string; authorUsername: string } | null;
+  /** First post of the conversation, for replies. Null for top-level posts. */
+  threadId: string | null;
+  /** Replies in the conversation for a top-level post; direct replies for a reply. */
+  repliesCount: number;
   likesCount: number;
   /** Whether the signed-in viewer liked or saved the post. False for visitors. */
   likedByViewer: boolean;
@@ -56,7 +63,13 @@ function postColumns(viewerId: string | null) {
     authorUsername: actors.username,
     authorDisplayName: actors.displayName,
     authorAvatarUrl: users.image,
-    // Counted on read; a stored counter can come when lists get large.
+    replyToId: posts.replyToId,
+    threadId: posts.threadId,
+    replyToAuthorUsername: sql<string | null>`(select a.username from ${actors} as a
+      inner join ${posts} as parent on parent.author_id = a.id where parent.id = ${posts.replyToId})`,
+    // Counted on read; stored counters can come when lists get large.
+    repliesCount: sql<number>`(select count(*) from ${posts} as replies
+      where replies.thread_id = ${posts.id} or replies.reply_to_id = ${posts.id})::int`,
     likesCount: sql<number>`(select count(*) from ${likes} where ${likes.postId} = ${posts.id})::int`,
     likedByViewer: viewerId
       ? sql<boolean>`exists(select 1 from ${likes} where ${likes.postId} = ${posts.id} and ${likes.actorId} = ${viewerId})`
@@ -91,6 +104,12 @@ function toView(row: PostRow): PostView {
     },
     createdAt: row.createdAt.toISOString(),
     editedAt: row.editedAt?.toISOString() ?? null,
+    replyTo:
+      row.replyToId && row.replyToAuthorUsername
+        ? { id: row.replyToId, authorUsername: row.replyToAuthorUsername }
+        : null,
+    threadId: row.threadId,
+    repliesCount: row.repliesCount,
     likesCount: row.likesCount,
     likedByViewer: row.likedByViewer,
     bookmarkedByViewer: row.bookmarkedByViewer,
@@ -111,22 +130,53 @@ async function saveTags(tx: Executor, postId: string, names: string[]) {
   }
 }
 
-export async function createPost(db: Database, authorId: string, input: PostInput) {
+export type CreatePostResult = { id: string } | 'parent_not_found';
+
+/**
+ * Publishes a post, or a reply when `replyToId` is set. Replies have no title and notify
+ * the author of the post they answer.
+ */
+export async function createPost(
+  db: Database,
+  authorId: string,
+  input: PostInput,
+  replyToId?: string,
+): Promise<CreatePostResult> {
   const rendered = renderMarkdown(input.content);
   return db.transaction(async (tx) => {
+    let parent: { authorId: string; threadId: string } | null = null;
+    if (replyToId) {
+      const [row] = await tx
+        .select({ authorId: posts.authorId, id: posts.id, threadId: posts.threadId })
+        .from(posts)
+        .where(eq(posts.id, replyToId));
+      if (!row) return 'parent_not_found';
+      parent = { authorId: row.authorId, threadId: row.threadId ?? row.id };
+    }
+
     const [post] = await tx
       .insert(posts)
       .values({
         authorId,
-        title: titleOf(input),
+        title: parent ? null : titleOf(input),
         content: input.content,
         contentHtml: rendered.html,
+        replyToId: replyToId ?? null,
+        threadId: parent?.threadId ?? null,
       })
       .returning({ id: posts.id });
     if (!post) throw new Error('post was not created');
 
     await saveTags(tx, post.id, rendered.tags);
-    return post.id;
+    if (parent) {
+      await notify(tx, {
+        recipientId: parent.authorId,
+        actorId: authorId,
+        type: 'reply',
+        postId: post.id,
+      });
+    }
+    return { id: post.id };
   });
 }
 
@@ -155,7 +205,8 @@ export async function updatePost(
     await tx
       .update(posts)
       .set({
-        title: titleOf(input),
+        // Replies never have a title.
+        title: sql`case when ${posts.threadId} is null then ${titleOf(input)}::text end`,
         content: input.content,
         contentHtml: rendered.html,
         editedAt: new Date(),
@@ -186,7 +237,12 @@ export async function getPost(
   return row ? toView(row) : null;
 }
 
+/** Lists show conversation starts; replies are read on the post page. */
 function filterCondition(filter: PostFilter): SQL | undefined {
+  return and(isNull(posts.threadId), matchCondition(filter));
+}
+
+function matchCondition(filter: PostFilter): SQL | undefined {
   switch (filter.kind) {
     case 'author':
       return isLocalUsername(filter.username);
@@ -267,4 +323,22 @@ export async function listBookmarkedPosts(
         ? encodeCursor({ at: last.savedAt.toISOString(), id: last.id })
         : null,
   };
+}
+
+export const THREAD_LIMIT = 500;
+
+/**
+ * Every reply in the conversation started by `rootId`, oldest first, so the page can build
+ * the tree from `replyTo`. Capped; paging long conversations comes when they exist.
+ */
+export async function listThread(
+  db: Database,
+  rootId: string,
+  viewerId: string | null,
+): Promise<PostView[]> {
+  const rows = await selectPosts(db, viewerId)
+    .where(eq(posts.threadId, rootId))
+    .orderBy(posts.id)
+    .limit(THREAD_LIMIT);
+  return rows.map(toView);
 }

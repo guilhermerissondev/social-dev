@@ -18,6 +18,7 @@ const routes = [
   '/welcome',
   '/home',
   '/explore',
+  '/search?q=warmup',
   '/saved',
   '/notifications',
   '/settings/profile',

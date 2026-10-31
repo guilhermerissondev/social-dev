@@ -245,5 +245,24 @@
     "clearFilter": "Ver todas",
     "empty": "Nenhum post neste período ainda.",
     "more": "Ver mais"
+  },
+  "Search": {
+    "label": "Buscar",
+    "placeholder": "Buscar na Social Dev",
+    "title": "Buscar",
+    "titleFor": "Resultados para “{q}”",
+    "syntaxHint": "Dica: use \"aspas\" para uma frase exata e -palavra para excluir.",
+    "typeLabel": "Tipo de resultado",
+    "types": {
+      "all": "Tudo",
+      "people": "Pessoas",
+      "posts": "Posts",
+      "tags": "Tags"
+    },
+    "tooShort": "Digite pelo menos 2 caracteres.",
+    "noResults": "Nada encontrado. Tente outras palavras.",
+    "tagPosts": "{count, plural, =0 {sem posts} one {# post} other {# posts}}",
+    "more": "Ver mais",
+    "headerPlaceholder": "Buscar…"
   }
 }

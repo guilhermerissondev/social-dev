@@ -19,3 +19,8 @@ export function createDatabase(url: string, options: DatabaseOptions = {}) {
 }
 
 export type Database = ReturnType<typeof createDatabase>['db'];
+
+export type Transaction = Parameters<Parameters<Database['transaction']>[0]>[0];
+
+/** Either the database or an open transaction, for functions that work inside both. */
+export type Executor = Database | Transaction;

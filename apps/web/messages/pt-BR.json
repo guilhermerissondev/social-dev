@@ -103,5 +103,43 @@
   "Feed": {
     "title": "Olá, {name}!",
     "description": "Sua conta está pronta. O feed com posts de quem você segue vai aparecer aqui."
+  },
+  "Profile": {
+    "edit": "Editar perfil",
+    "location": "Local",
+    "joined": "Na Social Dev desde",
+    "stack": "Stack"
+  },
+  "ProfileForm": {
+    "title": "Editar perfil",
+    "subtitle": "É assim que outras pessoas vão te encontrar na Social Dev.",
+    "displayName": "Nome",
+    "bio": "Bio",
+    "bioHint": "Até {max} caracteres.",
+    "location": "Local",
+    "technologies": "Tecnologias",
+    "technologiesHint": "Até {max}, separadas por vírgula. Use letras, números e _ (ex.: cpp, csharp, nodejs).",
+    "links": "Links",
+    "linkLabel": "Nome do link {number}",
+    "linkUrl": "Endereço do link {number}",
+    "linkDefaultLabel": "Link",
+    "submit": "Salvar perfil",
+    "errors": {
+      "invalidTechnologies": "Estas tecnologias não são válidas: {detail}. Use apenas letras, números e _.",
+      "invalid": "Confira os campos e tente de novo.",
+      "unknown": "Algo deu errado. Tente de novo."
+    }
+  },
+  "Welcome": {
+    "title": "Boas-vindas, {name}!",
+    "subtitle": "Falta só escolher seu nome de usuário. Ele não poderá ser trocado depois.",
+    "username": "Nome de usuário",
+    "usernameHint": "Letras, números e _. De 3 a 30 caracteres. Vai aparecer como @usuario.",
+    "submit": "Continuar",
+    "errors": {
+      "taken": "Esse nome de usuário já está em uso.",
+      "invalid": "Use de 3 a 30 caracteres: letras, números e _.",
+      "unknown": "Algo deu errado. Tente de novo."
+    }
   }
 }

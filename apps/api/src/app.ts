@@ -1,11 +1,14 @@
 import { OpenAPIHono } from '@hono/zod-openapi';
 import type { Database } from '@social-dev/db';
+import { csrf } from 'hono/csrf';
+import { HTTPException } from 'hono/http-exception';
 import { requestId } from 'hono/request-id';
 
 import type { Auth } from './auth/auth.ts';
 import { loadSession } from './auth/session.ts';
 import { AppError, errorBody } from './errors.ts';
 import type { Logger } from './logger.ts';
+import { profileRoutes } from './modules/profiles/routes.ts';
 import { authProvidersRoutes } from './routes/auth-providers.ts';
 import { healthRoutes } from './routes/health.ts';
 import { meRoutes } from './routes/me.ts';
@@ -14,6 +17,8 @@ export interface AppDeps {
   db: Database;
   logger: Logger;
   auth: Auth;
+  /** Origin of the web app, the only one allowed to send state-changing requests. */
+  webUrl: string;
 }
 
 export type Session = Auth['$Infer']['Session'];
@@ -60,9 +65,12 @@ export function createApp(deps: AppDeps) {
 
   app.on(['GET', 'POST'], '/api/auth/*', (c) => deps.auth.handler(c.req.raw));
 
+  // Better Auth checks the origin of its own routes; this covers everything else.
+  app.use('/api/*', csrf({ origin: deps.webUrl }));
   app.use('/api/*', loadSession);
   app.route('/', meRoutes);
   app.route('/', authProvidersRoutes);
+  app.route('/', profileRoutes);
 
   app.doc31('/openapi.json', {
     openapi: '3.1.0',
@@ -74,6 +82,10 @@ export function createApp(deps: AppDeps) {
   app.onError((error, c) => {
     if (error instanceof AppError) {
       return c.json(errorBody(error.code, error.message), error.status);
+    }
+    // Raised by Hono middleware, such as the CSRF check.
+    if (error instanceof HTTPException && error.status < 500) {
+      return c.json(errorBody('http_error', error.message), error.status);
     }
     deps.logger.error({ err: error, requestId: c.var.requestId }, 'unhandled error');
     return c.json(errorBody('internal_error', 'Something went wrong'), 500);

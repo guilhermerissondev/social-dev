@@ -18,7 +18,7 @@ const auth = createAuth({
   logger,
   rateLimit: env.AUTH_RATE_LIMIT,
 });
-const app = createApp({ db: database.db, logger, auth });
+const app = createApp({ db: database.db, logger, auth, webUrl: env.WEB_URL });
 
 const server = serve({ fetch: app.fetch, port: env.API_PORT }, (info) => {
   logger.info(`API listening on http://localhost:${info.port}`);

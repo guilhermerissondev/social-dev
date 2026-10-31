@@ -1,29 +1,12 @@
 import { afterAll, describe, expect, inject, it } from 'vitest';
 
-import { buildTestApp, WEB_URL } from './helpers.ts';
+import { buildTestApp, cookiesFrom, sendJson } from './helpers.ts';
 
 const { app, emails, close } = buildTestApp(inject('databaseUrl'));
 
 afterAll(close);
 
-function post(path: string, body: unknown, cookie?: string) {
-  return app.request(path, {
-    method: 'POST',
-    headers: {
-      'content-type': 'application/json',
-      origin: WEB_URL,
-      ...(cookie && { cookie }),
-    },
-    body: JSON.stringify(body),
-  });
-}
-
-function cookiesFrom(res: Response): string {
-  return res.headers
-    .getSetCookie()
-    .map((cookie) => cookie.split(';')[0])
-    .join('; ');
-}
+const post = (path: string, body: unknown) => sendJson(app, 'POST', path, body);
 
 /** Turns the absolute link from an email into a path the test app can request. */
 function linkFrom(text: string): string {

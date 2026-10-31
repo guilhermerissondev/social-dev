@@ -1,7 +1,7 @@
 import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi';
 
 import type { AppEnv } from '../app.ts';
-import { requireSession } from '../auth/session.ts';
+import { currentUser, requireSession } from '../auth/session.ts';
 
 const MeSchema = z
   .object({
@@ -27,9 +27,7 @@ const route = createRoute({
 });
 
 export const meRoutes = new OpenAPIHono<AppEnv>().openapi(route, (c) => {
-  // requireSession guarantees the session is present.
-  const { user } = c.var.session ?? { user: null };
-  if (!user) throw new Error('unreachable: missing session');
+  const user = currentUser(c);
 
   return c.json(
     {

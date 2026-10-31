@@ -1,6 +1,7 @@
+import type { Context } from 'hono';
 import { createMiddleware } from 'hono/factory';
 
-import type { AppEnv } from '../app.ts';
+import type { AppEnv, Session } from '../app.ts';
 import { AppError } from '../errors.ts';
 
 /** Loads the current session (if any) into `c.var.session`. */
@@ -17,3 +18,10 @@ export const requireSession = createMiddleware<AppEnv>(async (c, next) => {
   }
   await next();
 });
+
+/** The signed-in user, for handlers behind `requireSession`. */
+export function currentUser(c: Pick<Context<AppEnv>, 'var'>): Session['user'] {
+  const user = c.var.session?.user;
+  if (!user) throw new Error('currentUser called without requireSession');
+  return user;
+}

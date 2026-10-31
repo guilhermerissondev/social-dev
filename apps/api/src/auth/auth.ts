@@ -1,5 +1,7 @@
 import { schema, type Database } from '@social-dev/db';
+import { USERNAME_MAX_LENGTH, USERNAME_MIN_LENGTH, USERNAME_PATTERN } from '@social-dev/shared';
 import { betterAuth, type BetterAuthOptions } from 'better-auth';
+import { APIError } from 'better-auth/api';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { username } from 'better-auth/plugins';
 
@@ -7,8 +9,7 @@ import type { Env } from '../env.ts';
 import type { Logger } from '../logger.ts';
 import type { Mailer } from '../mail/mailer.ts';
 import { resetPasswordEmail, verificationEmail } from '../mail/templates.ts';
-
-export const USERNAME_PATTERN = /^[a-zA-Z0-9_]+$/;
+import { ensureLocalActor } from '../modules/profiles/service.ts';
 
 export interface AuthDeps {
   db: Database;
@@ -101,6 +102,29 @@ export function createAuth({ db, env, mailer, logger, rateLimit = true }: AuthDe
         trustedProviders: ['github', 'gitlab'],
       },
     },
+    databaseHooks: {
+      user: {
+        create: {
+          // Accounts created with a username get their profile right away. GitHub and GitLab
+          // sign-ups choose a username afterwards (POST /api/me/username).
+          after: async (user) => {
+            await ensureLocalActor(db, user);
+          },
+        },
+        update: {
+          // Handles become fediverse addresses (@user@domain), so they cannot change.
+          before: (data) => {
+            if (data.username != null || data.displayUsername != null) {
+              throw new APIError('BAD_REQUEST', {
+                code: 'USERNAME_IS_IMMUTABLE',
+                message: 'Usernames cannot be changed',
+              });
+            }
+            return Promise.resolve();
+          },
+        },
+      },
+    },
     rateLimit: {
       enabled: rateLimit,
       window: 60,
@@ -114,8 +138,8 @@ export function createAuth({ db, env, mailer, logger, rateLimit = true }: AuthDe
     },
     plugins: [
       username({
-        minUsernameLength: 3,
-        maxUsernameLength: 30,
+        minUsernameLength: USERNAME_MIN_LENGTH,
+        maxUsernameLength: USERNAME_MAX_LENGTH,
         usernameValidator: (value) => USERNAME_PATTERN.test(value),
       }),
     ],

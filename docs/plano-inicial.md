@@ -383,7 +383,7 @@ Um PR por etapa:
 
 Ficou para depois: upload de avatar e de imagens nos posts (módulo de mídia), repositórios fixados do GitHub e lista curada de tecnologias (M4), limite de posts por minuto (anti-spam, antes do beta).
 
-### 10.4 M3: interações (em andamento)
+### 10.4 M3: entregue
 
 Um PR por etapa. As notificações vêm cedo para que cada etapa seguinte já traga as suas.
 
@@ -391,4 +391,10 @@ Um PR por etapa. As notificações vêm cedo para que cada etapa seguinte já tr
 2. [x] **Notificações in-app:** novos seguidores e curtidas, contador de não lidas no cabeçalho, página de notificações. Gravadas na mesma transação da ação; repetir a ação não notifica de novo, e desfazê-la remove a notificação. Abrir a página marca como lidas só as que foram exibidas. Atualização em tempo real e o resumo por e-mail ficam para depois.
 3. [x] **Comentários com respostas:** comentários são posts que respondem a outro (`replyToId`, o `inReplyTo` do ActivityPub) e guardam o início da conversa (`threadId`). A página do post mostra a conversa em árvore e permite responder em qualquer nível; o recuo para no 4º nível para o texto continuar legível. Respostas não aparecem no feed nem nas listas, não têm título e notificam o autor do post respondido. Se um post é excluído, as respostas a ele continuam na conversa, como no fediverso. Conversas carregam até 500 respostas; paginação quando houver conversas desse tamanho.
 4. [x] **Repostagens:** repostar posts (`Announce` no M5), que entram no feed de quem segue quem repostou e no perfil de quem repostou, com a indicação "Fulano repostou". Repostagens têm id próprio ordenado pelo tempo, então aparecem no momento em que foram feitas, intercaladas com os posts. Notificam o autor. Um post repostado por duas pessoas que você segue aparece duas vezes no feed; agrupar fica para quando incomodar.
-5. [ ] **Menções:** `@usuario` vira link e notifica a pessoa mencionada.
+5. [x] **Menções:** `@usuario` vira link para o perfil e notifica a pessoa (só contas que existem; `@usuario@instancia` fica para o M5). Ignoradas dentro de código, links e e-mails. Editar o post notifica só quem passou a ser mencionado e remove a notificação de quem saiu. Quem já recebe a notificação de resposta não recebe também a de menção.
+
+Ficou para depois: notificações em tempo real e resumo por e-mail, agrupar repostagens repetidas no feed, autocompletar `@usuario` no editor, paginação de conversas muito longas.
+
+### 10.5 Próximo: M4 (descoberta)
+
+Onboarding por stack, sugestões de quem seguir, importação do GitHub, Explorar, busca e diretório.

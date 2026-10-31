@@ -22,7 +22,8 @@ você se cadastra, escolhe sua stack e já encontra pessoas e conteúdo que impo
 | M0. Descoberta e planejamento   | ✅ Concluído |
 | M1. Fundação (autenticação, CI) | ✅ Concluído |
 | M2. Núcleo social               | ✅ Concluído |
-| M3. Interações                  | ⏳ Próximo   |
+| M3. Interações                  | ✅ Concluído |
+| M4. Descoberta                  | ⏳ Próximo   |
 | M5. Federação (ActivityPub)     | 📋 Planejado |
 
 O plano completo está em [`docs/plano-inicial.md`](docs/plano-inicial.md) e as decisões de arquitetura em

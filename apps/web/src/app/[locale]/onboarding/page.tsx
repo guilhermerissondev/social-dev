@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
 
+import { GitHubFollows } from '@/components/github/github-follows.tsx';
 import { FinishOnboardingButton } from '@/components/onboarding/finish-button.tsx';
 import { ProfileStep } from '@/components/onboarding/profile-step.tsx';
 import { SuggestionRow } from '@/components/onboarding/suggestion-row.tsx';
@@ -9,6 +10,7 @@ import { TagsStep } from '@/components/onboarding/tags-step.tsx';
 import { Link } from '@/i18n/navigation.ts';
 import { requireUserWithUsername } from '@/lib/guards.ts';
 import { queryValue } from '@/lib/handles.ts';
+import { getGitHubFollows } from '@/lib/github.ts';
 import { getProfile } from '@/lib/profiles.ts';
 import { getPeopleSuggestions, getTagSuggestions } from '@/lib/suggestions.ts';
 
@@ -71,9 +73,20 @@ async function StepContent({ step, username }: { step: Step; username: string })
       return <TagsStep tags={tags} preselected={profile?.technologies ?? []} />;
     }
     case 'people': {
-      const people = await getPeopleSuggestions(10);
+      const [people, fromGitHub] = await Promise.all([
+        getPeopleSuggestions(10),
+        getGitHubFollows(),
+      ]);
       return (
         <div className="flex flex-col gap-6">
+          {fromGitHub && fromGitHub.length > 0 && (
+            <section aria-labelledby="from-github-heading">
+              <h2 id="from-github-heading" className="mb-2 text-sm font-semibold text-zinc-300">
+                {t('fromGitHub')}
+              </h2>
+              <GitHubFollows people={fromGitHub} />
+            </section>
+          )}
           {people.length === 0 ? (
             <p className="text-sm text-zinc-400">{t('noPeople')}</p>
           ) : (

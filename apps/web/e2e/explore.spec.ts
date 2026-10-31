@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 
 import { newUser, signUpAndConfirm } from './accounts.ts';
+import { clickAndWaitForApi } from './actions.ts';
 
 test('explore shows popular posts to everyone and filters by tag', async ({
   page,
@@ -16,7 +17,7 @@ test('explore shows popular posts to everyone and filters by tag', async ({
     await expect(page.getByLabel('Conteúdo do post')).toHaveValue('');
   }
   const popular = page.locator('article').filter({ hasText: 'Popular post' });
-  await popular.getByRole('button', { name: 'Curtir' }).click();
+  await clickAndWaitForApi(popular.getByRole('button', { name: 'Curtir' }), /\/like$/);
   await expect(popular.getByRole('button', { name: 'Curtir' })).toHaveText('1');
 
   // A visitor reaches Explore from the header.

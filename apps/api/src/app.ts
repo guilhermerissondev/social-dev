@@ -7,9 +7,11 @@ import { requestId } from 'hono/request-id';
 import type { Auth } from './auth/auth.ts';
 import { loadSession } from './auth/session.ts';
 import { AppError, errorBody } from './errors.ts';
+import type { GitHubClient } from './github/client.ts';
 import type { Logger } from './logger.ts';
 import { directoryRoutes } from './modules/directory/routes.ts';
 import { exploreRoutes } from './modules/explore/routes.ts';
+import { githubRoutes } from './modules/github/routes.ts';
 import { interactionRoutes } from './modules/interactions/routes.ts';
 import { notificationRoutes } from './modules/notifications/routes.ts';
 import { onboardingRoutes } from './modules/onboarding/routes.ts';
@@ -25,6 +27,8 @@ export interface AppDeps {
   db: Database;
   logger: Logger;
   auth: Auth;
+  /** Reads public data from GitHub with each person's token. */
+  github: GitHubClient;
   /** Origin of the web app, the only one allowed to send state-changing requests. */
   webUrl: string;
 }
@@ -89,6 +93,7 @@ export function createApp(deps: AppDeps) {
   app.route('/', searchRoutes);
   app.route('/', directoryRoutes);
   app.route('/', onboardingRoutes);
+  app.route('/', githubRoutes);
 
   app.doc31('/openapi.json', {
     openapi: '3.1.0',

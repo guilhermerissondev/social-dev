@@ -37,6 +37,8 @@ O `.env` não vai para o Git (está no `.gitignore`). A API só liga o GitHub qu
 
 Se o e-mail da sua conta no GitHub for o mesmo de uma conta da Social Dev criada com e-mail e senha, as duas são vinculadas automaticamente (o GitHub confirma o e-mail).
 
+Para conectar o GitHub a uma conta que já existe, use **Configurações → GitHub** (`/settings/github`). Por segurança, só funciona se o e-mail principal do GitHub for o mesmo da conta.
+
 ## Permissões pedidas
 
 O login usa os escopos padrão do Better Auth para o GitHub: `read:user` e `user:email`. São suficientes para a etapa 5, que só lê dados públicos (quem a pessoa segue e os repositórios fixados). Nenhum escopo de escrita ou de repositórios privados é pedido.

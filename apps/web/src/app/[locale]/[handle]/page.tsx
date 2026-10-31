@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import { getFormatter, getTranslations } from 'next-intl/server';
 
 import { FollowButton } from '@/components/follow-button.tsx';
+import { PinnedRepos } from '@/components/github/pinned-repos.tsx';
 import { PostList } from '@/components/posts/post-list.tsx';
 import { Avatar } from '@/components/profile/avatar.tsx';
 import { Link } from '@/i18n/navigation.ts';
@@ -168,6 +169,31 @@ export default async function ProfilePage({
               </li>
             ))}
           </ul>
+        </section>
+      )}
+
+      {profile.github && (
+        <section className="mt-8" aria-labelledby="pinned-heading">
+          <h2 id="pinned-heading" className="text-sm font-semibold text-zinc-300">
+            {t.rich('pinnedOnGitHub', {
+              link: (chunks) => (
+                <a
+                  href={`https://github.com/${profile.github?.login ?? ''}`}
+                  rel="me nofollow noopener noreferrer"
+                  target="_blank"
+                  className="font-mono text-emerald-400 hover:underline"
+                >
+                  {chunks}
+                </a>
+              ),
+              login: profile.github.login,
+            })}
+          </h2>
+          {profile.github.pinnedRepos.length > 0 && (
+            <div className="mt-3">
+              <PinnedRepos repos={profile.github.pinnedRepos} />
+            </div>
+          )}
         </section>
       )}
 

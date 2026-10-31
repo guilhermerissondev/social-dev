@@ -96,6 +96,9 @@ export function createAuth({ db, env, mailer, logger, rateLimit = true }: AuthDe
     },
     socialProviders: socialProviders(env),
     account: {
+      // OAuth tokens are encrypted in the database with BETTER_AUTH_SECRET; the API reads
+      // them through auth.api.getAccessToken.
+      encryptOAuthTokens: true,
       accountLinking: {
         enabled: true,
         // Only link automatically when the provider has verified the email address.

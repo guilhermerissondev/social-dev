@@ -8,4 +8,5 @@ export {
 export { pingDatabase } from './health.ts';
 export { runMigrations } from './migrate.ts';
 export * as schema from './schema/index.ts';
+export type { PinnedRepo } from './schema/github.ts';
 export type { NotificationType } from './schema/notifications.ts';

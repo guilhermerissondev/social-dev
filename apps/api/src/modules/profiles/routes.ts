@@ -7,6 +7,8 @@ import type { AppEnv } from '../../app.ts';
 import { viewerActorId } from '../../auth/actor.ts';
 import { currentUser, requireSession } from '../../auth/session.ts';
 import { AppError } from '../../errors.ts';
+import { PinnedRepoSchema } from '../github/routes.ts';
+import { publicGitHub } from '../github/service.ts';
 import { getFollowStats } from '../social-graph/service.ts';
 import { claimUsername, ensureLocalActor, getLocalProfile, updateProfile } from './service.ts';
 
@@ -26,6 +28,10 @@ const ProfileSchema = z
     followersCount: z.number().int(),
     followingCount: z.number().int(),
     followedByViewer: z.boolean().openapi({ description: 'False when not signed in' }),
+    github: z
+      .object({ login: z.string(), pinnedRepos: z.array(PinnedRepoSchema) })
+      .nullable()
+      .openapi({ description: 'Only when the owner chose to show it' }),
   })
   .openapi('Profile');
 
@@ -76,8 +82,11 @@ const claimUsernameRoute = createRoute({
 async function loadProfile(c: Context<AppEnv>, username: string) {
   const profile = await getLocalProfile(c.var.deps.db, username);
   if (!profile) throw new AppError(404, 'not_found', 'Profile not found');
-  const stats = await getFollowStats(c.var.deps.db, profile.id, await viewerActorId(c));
-  return { ...profile, ...stats };
+  const [stats, github] = await Promise.all([
+    getFollowStats(c.var.deps.db, profile.id, await viewerActorId(c)),
+    publicGitHub(c.var.deps.db, profile.id),
+  ]);
+  return { ...profile, ...stats, github };
 }
 
 export const profileRoutes = new OpenAPIHono<AppEnv>()

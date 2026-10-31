@@ -92,6 +92,13 @@
       "when": 1793466178247,
       "tag": "0012_onboarding",
       "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1793486941433,
+      "tag": "0013_github_profiles",
+      "breakpoints": true
     }
   ]
 }

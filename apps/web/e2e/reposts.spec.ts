@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 
 import { newUser, signUpAndConfirm } from './accounts.ts';
+import { clickAndWaitForApi } from './actions.ts';
 
 test('a repost reaches the followers of the person who reposted', async ({ browser, request }) => {
   const author = newUser();
@@ -26,7 +27,7 @@ test('a repost reaches the followers of the person who reposted', async ({ brows
 
   await boosterPage.goto(`/@${author.username}`);
   const repost = boosterPage.locator('article').getByRole('button', { name: 'Repostar' });
-  await repost.click();
+  await clickAndWaitForApi(repost, /\/repost$/);
   await expect(repost).toHaveAttribute('aria-pressed', 'true');
   await expect(repost).toHaveText('1');
 
@@ -42,7 +43,7 @@ test('a repost reaches the followers of the person who reposted', async ({ brows
   );
 
   // Undoing the repost takes it out of the reader's feed.
-  await repost.click();
+  await clickAndWaitForApi(repost, /\/repost$/);
   await expect(repost).toHaveAttribute('aria-pressed', 'false');
   await readerPage.reload();
   await expect(readerPage.getByText('Seu feed está vazio.')).toBeVisible();

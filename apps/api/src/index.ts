@@ -3,6 +3,7 @@ import { createDatabase } from '@social-dev/db';
 
 import { createApp } from './app.ts';
 import { createAuth } from './auth/auth.ts';
+import { createGitHubClient } from './github/client.ts';
 import { loadEnv } from './env.ts';
 import { createLogger } from './logger.ts';
 import { createSmtpMailer } from './mail/mailer.ts';
@@ -18,7 +19,13 @@ const auth = createAuth({
   logger,
   rateLimit: env.AUTH_RATE_LIMIT,
 });
-const app = createApp({ db: database.db, logger, auth, webUrl: env.WEB_URL });
+const app = createApp({
+  db: database.db,
+  logger,
+  auth,
+  github: createGitHubClient(),
+  webUrl: env.WEB_URL,
+});
 
 const server = serve({ fetch: app.fetch, port: env.API_PORT }, (info) => {
   logger.info(`API listening on http://localhost:${info.port}`);

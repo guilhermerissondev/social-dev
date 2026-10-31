@@ -143,7 +143,8 @@
       "staff": "Staff, principal ou liderança técnica"
     },
     "area": "Área",
-    "seniority": "Senioridade"
+    "seniority": "Senioridade",
+    "pinnedOnGitHub": "Fixados no GitHub de <link>{login}</link>"
   },
   "ProfileForm": {
     "title": "Editar perfil",
@@ -166,7 +167,8 @@
     },
     "area": "Área",
     "seniority": "Senioridade",
-    "notSaying": "Prefiro não informar"
+    "notSaying": "Prefiro não informar",
+    "githubLink": "Conectar GitHub e mostrar repositórios fixados →"
   },
   "Welcome": {
     "title": "Boas-vindas, {name}!",
@@ -328,11 +330,37 @@
     "noPeople": "Ainda não temos sugestões. Você pode encontrar pessoas no diretório.",
     "continue": "Continuar",
     "skip": "Pular esta etapa",
-    "finish": "Ir para o feed"
+    "finish": "Ir para o feed",
+    "fromGitHub": "Do seu GitHub"
   },
   "Suggestions": {
     "sharedStack": "Também usa {tags}",
     "followedByFollowing": "{count, plural, one {Seguido por # pessoa que você segue} other {Seguido por # pessoas que você segue}}",
     "followLabel": "Seguir @{username}"
+  },
+  "GitHub": {
+    "title": "GitHub",
+    "subtitle": "Mostre seus repositórios fixados no perfil e encontre aqui quem você já segue no GitHub.",
+    "notConnected": "Sua conta ainda não está conectada ao GitHub.",
+    "notConfigured": "O login com GitHub não está configurado neste servidor.",
+    "connect": "Conectar GitHub",
+    "account": "Conta",
+    "connectedAs": "Conectado como <link>{login}</link>",
+    "fetchedAt": "dados de {when}",
+    "showOnProfile": "Mostrar meu GitHub e meus repositórios fixados no perfil",
+    "refresh": "Atualizar do GitHub",
+    "pinned": "Repositórios fixados",
+    "noPinned": "Você não tem repositórios fixados no GitHub.",
+    "follows": "Quem você segue no GitHub e está na Social Dev",
+    "noFollows": "Ninguém que você segue no GitHub está na Social Dev ainda.",
+    "followsUnavailable": "Não foi possível consultar o GitHub agora. Tente mais tarde.",
+    "followAll": "{count, plural, =0 {Você já segue todos} one {Seguir # pessoa} other {Seguir as # pessoas}}",
+    "followLabel": "Seguir @{username}",
+    "stars": "{count, plural, one {# estrela} other {{formatted} estrelas}}",
+    "linkErrors": {
+      "email_does_not_match": "O e-mail principal da sua conta no GitHub é diferente do e-mail desta conta. Por segurança, só conectamos contas com o mesmo e-mail: mude o e-mail principal no GitHub (ou nesta conta) e tente de novo.",
+      "account_already_linked_to_different_user": "Essa conta do GitHub já está conectada a outra conta da Social Dev.",
+      "unknown": "Não foi possível conectar o GitHub. Tente de novo."
+    }
   }
 }

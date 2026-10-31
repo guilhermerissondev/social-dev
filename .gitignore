@@ -1,0 +1,36 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build output
+dist/
+build/
+.next/
+out/
+*.tsbuildinfo
+
+# Turborepo
+.turbo/
+
+# Tests
+coverage/
+playwright-report/
+test-results/
+blob-report/
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+
+# Local data
+storage/
+*.log
+
+# OS and editors
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json

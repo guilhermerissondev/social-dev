@@ -1,0 +1,35 @@
+{
+  "Metadata": {
+    "title": "Social Dev",
+    "description": "A rede social de quem desenvolve software."
+  },
+  "Header": {
+    "home": "Página inicial",
+    "login": "Entrar",
+    "signup": "Criar conta",
+    "language": "Idioma"
+  },
+  "Home": {
+    "title": "A rede social de quem desenvolve software.",
+    "subtitle": "Aqui todo mundo é dev. Compartilhe o que você está construindo, aprenda com a comunidade e encontre pessoas da sua stack sem precisar procurar.",
+    "primaryCta": "Criar conta",
+    "secondaryCta": "Já tenho conta",
+    "features": {
+      "code": {
+        "title": "Feito para código",
+        "description": "Posts em Markdown com blocos de código e destaque de sintaxe."
+      },
+      "stack": {
+        "title": "Encontre sua stack",
+        "description": "Siga pessoas e tecnologias. Conecte sua conta do GitHub ou GitLab."
+      },
+      "open": {
+        "title": "Aberta e federada",
+        "description": "Código aberto e conectada ao Mastodon e ao resto do fediverso."
+      }
+    }
+  },
+  "Footer": {
+    "openSource": "Projeto de código aberto sob a licença GPL-3.0."
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "Metadata": {
+    "title": "Social Dev",
+    "description": "The social network for people who build software."
+  },
+  "Header": {
+    "home": "Home",
+    "login": "Log in",
+    "signup": "Sign up",
+    "language": "Language"
+  },
+  "Home": {
+    "title": "The social network for people who build software.",
+    "subtitle": "Everyone here is a developer. Share what you are building, learn from the community and find people who use your stack without having to search for them.",
+    "primaryCta": "Sign up",
+    "secondaryCta": "I already have an account",
+    "features": {
+      "code": {
+        "title": "Made for code",
+        "description": "Markdown posts with code blocks and syntax highlighting."
+      },
+      "stack": {
+        "title": "Find your stack",
+        "description": "Follow people and technologies. Connect your GitHub or GitLab account."
+      },
+      "open": {
+        "title": "Open and federated",
+        "description": "Open source and connected to Mastodon and the rest of the fediverse."
+      }
+    }
+  },
+  "Footer": {
+    "openSource": "Open source project licensed under GPL-3.0."
+  }
+}

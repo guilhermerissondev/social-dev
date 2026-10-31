@@ -54,6 +54,8 @@ pnpm dev
 Os e-mails enviados localmente (confirmação de conta, redefinição de senha) aparecem no Mailpit em
 http://localhost:8025.
 
+Login com GitHub (opcional): veja [docs/desenvolvimento/github-oauth.md](docs/desenvolvimento/github-oauth.md).
+
 Stack, estrutura do repositório e lista de comandos estão no [README em inglês](README.md).
 
 ## Licença

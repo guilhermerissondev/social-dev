@@ -174,7 +174,7 @@
     "write": "Write",
     "preview": "Preview",
     "nothingToPreview": "Nothing to preview.",
-    "markdownHint": "Markdown with code blocks. Use #tags to show up in topics.",
+    "markdownHint": "Markdown with code blocks. Use #tags to show up in topics and @username to mention someone.",
     "publish": "Publish",
     "save": "Save",
     "editTitle": "Edit post",
@@ -217,13 +217,14 @@
   },
   "Notifications": {
     "title": "Notifications",
-    "empty": "No notifications yet. When someone follows you or likes your posts, it shows up here.",
+    "empty": "No notifications yet. When someone follows you, mentions you or interacts with your posts, it shows up here.",
     "follow": "<actor></actor> followed you",
     "like": "<actor></actor> liked your post",
     "unread": "unread",
     "older": "Older notifications",
     "reply": "<actor></actor> replied to your post",
-    "repost": "<actor></actor> reposted your post"
+    "repost": "<actor></actor> reposted your post",
+    "mention": "<actor></actor> mentioned you"
   },
   "Thread": {
     "reply": "Reply",

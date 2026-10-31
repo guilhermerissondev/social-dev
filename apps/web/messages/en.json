@@ -11,7 +11,9 @@
     "logout": "Log out",
     "profile": "Your profile",
     "feed": "Home",
-    "saved": "Saved"
+    "saved": "Saved",
+    "notifications": "Notifications",
+    "notificationsUnread": "Notifications ({count, plural, one {# unread} other {# unread}})"
   },
   "Home": {
     "title": "The social network for people who build software.",
@@ -203,5 +205,13 @@
     "title": "Saved",
     "subtitle": "Only you can see the posts you saved.",
     "empty": "You have not saved any posts yet. Use the bookmark icon on a post to keep it here."
+  },
+  "Notifications": {
+    "title": "Notifications",
+    "empty": "No notifications yet. When someone follows you or likes your posts, it shows up here.",
+    "follow": "<actor></actor> followed you",
+    "like": "<actor></actor> liked your post",
+    "unread": "unread",
+    "older": "Older notifications"
   }
 }

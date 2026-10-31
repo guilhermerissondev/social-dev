@@ -3,10 +3,11 @@ import { and, desc, eq, exists, inArray, lt, or, sql, type SQL } from '@social-d
 import { renderMarkdown } from '@social-dev/markdown';
 import { POST_LIMITS, type PostInput } from '@social-dev/shared';
 
+import { decodeCursor, encodeCursor } from '../../lib/cursor.ts';
 import { isLocalUsername } from '../profiles/service.ts';
 import { upsertTags } from '../tags/service.ts';
 
-const { actors, follows, posts, postTags, tagFollows, tags, users } = schema;
+const { actors, bookmarks, follows, likes, posts, postTags, tagFollows, tags, users } = schema;
 
 export const PAGE_SIZE = 20;
 
@@ -25,6 +26,10 @@ export interface PostView {
   };
   createdAt: string;
   editedAt: string | null;
+  likesCount: number;
+  /** Whether the signed-in viewer liked or saved the post. False for visitors. */
+  likedByViewer: boolean;
+  bookmarkedByViewer: boolean;
 }
 
 export interface PostPage {
@@ -39,22 +44,32 @@ export type PostFilter =
   /** The "Following" feed: the actor's own posts, people they follow and tags they follow. */
   | { kind: 'feed'; actorId: string };
 
-const postColumns = {
-  id: posts.id,
-  title: posts.title,
-  content: posts.content,
-  contentHtml: posts.contentHtml,
-  createdAt: posts.createdAt,
-  editedAt: posts.editedAt,
-  authorId: actors.id,
-  authorUsername: actors.username,
-  authorDisplayName: actors.displayName,
-  authorAvatarUrl: users.image,
-};
+function postColumns(viewerId: string | null) {
+  return {
+    id: posts.id,
+    title: posts.title,
+    content: posts.content,
+    contentHtml: posts.contentHtml,
+    createdAt: posts.createdAt,
+    editedAt: posts.editedAt,
+    authorId: actors.id,
+    authorUsername: actors.username,
+    authorDisplayName: actors.displayName,
+    authorAvatarUrl: users.image,
+    // Counted on read; a stored counter can come when lists get large.
+    likesCount: sql<number>`(select count(*) from ${likes} where ${likes.postId} = ${posts.id})::int`,
+    likedByViewer: viewerId
+      ? sql<boolean>`exists(select 1 from ${likes} where ${likes.postId} = ${posts.id} and ${likes.actorId} = ${viewerId})`
+      : sql<boolean>`false`,
+    bookmarkedByViewer: viewerId
+      ? sql<boolean>`exists(select 1 from ${bookmarks} where ${bookmarks.postId} = ${posts.id} and ${bookmarks.actorId} = ${viewerId})`
+      : sql<boolean>`false`,
+  };
+}
 
-function selectPosts(db: Executor) {
+function selectPosts(db: Executor, viewerId: string | null) {
   return db
-    .select(postColumns)
+    .select(postColumns(viewerId))
     .from(posts)
     .innerJoin(actors, eq(actors.id, posts.authorId))
     .leftJoin(users, eq(users.id, actors.userId));
@@ -76,6 +91,9 @@ function toView(row: PostRow): PostView {
     },
     createdAt: row.createdAt.toISOString(),
     editedAt: row.editedAt?.toISOString() ?? null,
+    likesCount: row.likesCount,
+    likedByViewer: row.likedByViewer,
+    bookmarkedByViewer: row.bookmarkedByViewer,
   };
 }
 
@@ -159,8 +177,12 @@ export async function deletePost(
   return 'ok';
 }
 
-export async function getPost(db: Database, postId: string): Promise<PostView | null> {
-  const [row] = await selectPosts(db).where(eq(posts.id, postId));
+export async function getPost(
+  db: Database,
+  postId: string,
+  viewerId: string | null,
+): Promise<PostView | null> {
+  const [row] = await selectPosts(db, viewerId).where(eq(posts.id, postId));
   return row ? toView(row) : null;
 }
 
@@ -194,13 +216,55 @@ function filterCondition(filter: PostFilter): SQL | undefined {
 export async function listPosts(
   db: Database,
   filter: PostFilter,
-  { before, limit = PAGE_SIZE }: { before?: string | undefined; limit?: number } = {},
+  {
+    before,
+    viewerId = null,
+    limit = PAGE_SIZE,
+  }: { before?: string | undefined; viewerId?: string | null; limit?: number } = {},
 ): Promise<PostPage> {
-  const rows = await selectPosts(db)
+  const rows = await selectPosts(db, viewerId)
     .where(and(filterCondition(filter), before ? lt(posts.id, before) : undefined))
     .orderBy(desc(posts.id))
     .limit(limit + 1);
 
   const items = rows.slice(0, limit).map(toView);
   return { items, nextCursor: rows.length > limit ? (items.at(-1)?.id ?? null) : null };
+}
+
+/** Posts the actor saved, most recently saved first. Only ever shown to that actor. */
+export async function listBookmarkedPosts(
+  db: Database,
+  actorId: string,
+  cursorValue?: string,
+): Promise<PostPage> {
+  const cursor = cursorValue ? decodeCursor(cursorValue) : null;
+  const rows = await db
+    .select({ ...postColumns(actorId), savedAt: bookmarks.createdAt })
+    .from(bookmarks)
+    .innerJoin(posts, eq(posts.id, bookmarks.postId))
+    .innerJoin(actors, eq(actors.id, posts.authorId))
+    .leftJoin(users, eq(users.id, actors.userId))
+    .where(
+      and(
+        eq(bookmarks.actorId, actorId),
+        cursor
+          ? or(
+              lt(bookmarks.createdAt, new Date(cursor.at)),
+              and(eq(bookmarks.createdAt, new Date(cursor.at)), lt(posts.id, cursor.id)),
+            )
+          : undefined,
+      ),
+    )
+    .orderBy(desc(bookmarks.createdAt), desc(posts.id))
+    .limit(PAGE_SIZE + 1);
+
+  const page = rows.slice(0, PAGE_SIZE);
+  const last = page.at(-1);
+  return {
+    items: page.map(toView),
+    nextCursor:
+      rows.length > PAGE_SIZE && last
+        ? encodeCursor({ at: last.savedAt.toISOString(), id: last.id })
+        : null,
+  };
 }

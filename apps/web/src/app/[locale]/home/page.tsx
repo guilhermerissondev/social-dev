@@ -24,7 +24,13 @@ export default async function HomeFeedPage({ searchParams }: PageProps<'/[locale
         <h2 className="border-b border-zinc-800 pb-3 text-sm font-semibold text-zinc-300">
           {t('following')}
         </h2>
-        <PostList page={feed} olderHref={(cursor) => `?before=${cursor}`} empty={t('empty')} />
+        <PostList
+          page={feed}
+          olderHref={(cursor) => `?before=${cursor}`}
+          empty={t('empty')}
+          // Signed in with a username: the guard above guarantees it.
+          fallbackHref={null}
+        />
       </section>
     </div>
   );

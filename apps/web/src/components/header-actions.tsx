@@ -18,6 +18,16 @@ export function HeaderActions() {
     const handle = data.user.displayUsername ?? data.user.username;
     return (
       <>
+        {handle && (
+          <>
+            <Link href="/home" className="text-sm text-zinc-300 hover:text-zinc-100">
+              {t('feed')}
+            </Link>
+            <Link href="/saved" className="text-sm text-zinc-300 hover:text-zinc-100">
+              {t('saved')}
+            </Link>
+          </>
+        )}
         <Link
           href={handle ? `/@${handle}` : '/welcome'}
           className="text-sm text-zinc-300 hover:text-zinc-100"

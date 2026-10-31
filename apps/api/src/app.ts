@@ -8,6 +8,7 @@ import type { Auth } from './auth/auth.ts';
 import { loadSession } from './auth/session.ts';
 import { AppError, errorBody } from './errors.ts';
 import type { Logger } from './logger.ts';
+import { interactionRoutes } from './modules/interactions/routes.ts';
 import { postRoutes } from './modules/posts/routes.ts';
 import { profileRoutes } from './modules/profiles/routes.ts';
 import { socialGraphRoutes } from './modules/social-graph/routes.ts';
@@ -30,6 +31,8 @@ export interface AppEnv {
     deps: AppDeps;
     requestId: string;
     session: Session | null;
+    /** Cached by `viewerActorId`; undefined until first asked. */
+    viewerActorId?: string | null;
   };
 }
 
@@ -75,6 +78,7 @@ export function createApp(deps: AppDeps) {
   app.route('/', profileRoutes);
   app.route('/', postRoutes);
   app.route('/', socialGraphRoutes);
+  app.route('/', interactionRoutes);
 
   app.doc31('/openapi.json', {
     openapi: '3.1.0',

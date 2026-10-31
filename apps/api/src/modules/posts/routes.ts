@@ -4,7 +4,7 @@ import { normalizeTag, postContentSchema, postInputSchema } from '@social-dev/sh
 import type { Context } from 'hono';
 
 import type { AppEnv } from '../../app.ts';
-import { requireActorId } from '../../auth/actor.ts';
+import { requireActorId, viewerActorId } from '../../auth/actor.ts';
 import { requireSession } from '../../auth/session.ts';
 import { AppError } from '../../errors.ts';
 import {
@@ -15,29 +15,7 @@ import {
   updatePost,
   type OwnPostResult,
 } from './service.ts';
-
-const AuthorSchema = z.object({
-  id: z.uuid(),
-  username: z.string(),
-  displayName: z.string(),
-  avatarUrl: z.string().nullable(),
-});
-
-const PostSchema = z
-  .object({
-    id: z.uuid(),
-    title: z.string().nullable(),
-    content: z.string().openapi({ description: 'Markdown source' }),
-    contentHtml: z.string().openapi({ description: 'Sanitized HTML rendered from the source' }),
-    author: AuthorSchema,
-    createdAt: z.iso.datetime(),
-    editedAt: z.iso.datetime().nullable(),
-  })
-  .openapi('Post');
-
-const PostPageSchema = z
-  .object({ items: z.array(PostSchema), nextCursor: z.uuid().nullable() })
-  .openapi('PostPage');
+import { PostPageSchema, PostSchema } from './schemas.ts';
 
 const PageQuery = z.object({
   before: z.uuid().optional().openapi({ description: 'Cursor from the previous page' }),
@@ -153,7 +131,7 @@ function assertOwner(result: OwnPostResult) {
 }
 
 async function loadPost(c: Context<AppEnv>, id: string) {
-  const post = await getPost(c.var.deps.db, id);
+  const post = await getPost(c.var.deps.db, id, await viewerActorId(c));
   if (!post) throw new AppError(404, 'not_found', 'Post not found');
   return post;
 }
@@ -184,15 +162,16 @@ export const postRoutes = new OpenAPIHono<AppEnv>()
     const page = await listPosts(
       c.var.deps.db,
       { kind: 'author', username },
-      { before: c.req.valid('query').before },
+      { before: c.req.valid('query').before, viewerId: await viewerActorId(c) },
     );
     return c.json(page, 200);
   })
   .openapi(routes.feed, async (c) => {
+    const actorId = await requireActorId(c);
     const page = await listPosts(
       c.var.deps.db,
-      { kind: 'feed', actorId: await requireActorId(c) },
-      { before: c.req.valid('query').before },
+      { kind: 'feed', actorId },
+      { before: c.req.valid('query').before, viewerId: actorId },
     );
     return c.json(page, 200);
   })
@@ -203,7 +182,7 @@ export const postRoutes = new OpenAPIHono<AppEnv>()
       ? await listPosts(
           c.var.deps.db,
           { kind: 'tag', name },
-          { before: c.req.valid('query').before },
+          { before: c.req.valid('query').before, viewerId: await viewerActorId(c) },
         )
       : { items: [], nextCursor: null };
     return c.json(page, 200);

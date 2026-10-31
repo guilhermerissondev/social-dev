@@ -12,6 +12,9 @@ export interface Post {
   author: { id: string; username: string; displayName: string; avatarUrl: string | null };
   createdAt: string;
   editedAt: string | null;
+  likesCount: number;
+  likedByViewer: boolean;
+  bookmarkedByViewer: boolean;
 }
 
 export interface PostPage {
@@ -47,4 +50,12 @@ export function listTagPosts(tag: string, before?: string) {
 /** The signed-in user's "Following" feed. */
 export function getFeed(before?: string) {
   return fetchPage('/api/feed', before);
+}
+
+/** Posts the signed-in user saved. The cursor is opaque. */
+export async function getBookmarks(cursor?: string): Promise<PostPage> {
+  const query = cursor ? `?cursor=${encodeURIComponent(cursor)}` : '';
+  const res = await apiFetch(`/api/me/bookmarks${query}`);
+  if (!res.ok) throw new Error(`failed to load bookmarks: ${res.status}`);
+  return (await res.json()) as PostPage;
 }

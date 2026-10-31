@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getFormatter, getTranslations } from 'next-intl/server';
 
+import { FollowButton } from '@/components/follow-button.tsx';
 import { PostList } from '@/components/posts/post-list.tsx';
 import { Avatar } from '@/components/profile/avatar.tsx';
 import { Link } from '@/i18n/navigation.ts';
@@ -10,6 +11,7 @@ import { queryValue, usernameFromSegment } from '@/lib/handles.ts';
 import { listProfilePosts } from '@/lib/posts.ts';
 import { getProfile } from '@/lib/profiles.ts';
 import { getSessionUser } from '@/lib/session.ts';
+import { followFallbackHref } from '@/lib/viewer.ts';
 
 /** Profiles live at /@username. Any other single segment is not a page. */
 async function profileFromParams(params: PageProps<'/[locale]/[handle]'>['params']) {
@@ -34,11 +36,12 @@ export default async function ProfilePage({
 }: PageProps<'/[locale]/[handle]'>) {
   const profile = await profileFromParams(params);
   const before = queryValue((await searchParams).before);
-  const [t, format, viewer, posts] = await Promise.all([
+  const [t, format, viewer, posts, fallbackHref] = await Promise.all([
     getTranslations('Profile'),
     getFormatter(),
     getSessionUser(),
     listProfilePosts(profile.username, before),
+    followFallbackHref(),
   ]);
   const isOwner = viewer?.username === profile.username.toLowerCase();
 
@@ -52,14 +55,36 @@ export default async function ProfilePage({
             <p className="font-mono text-zinc-400">@{profile.username}</p>
           </div>
         </div>
-        {isOwner && (
+        {isOwner ? (
           <Link href="/settings/profile" className={buttonClasses('secondary')}>
             {t('edit')}
           </Link>
+        ) : (
+          <FollowButton
+            apiPath={`/api/profiles/${profile.username}/follow`}
+            following={profile.followedByViewer}
+            fallbackHref={fallbackHref}
+            label={t('followLabel', { username: profile.username })}
+          />
         )}
       </header>
 
-      {profile.bio && <p className="mt-6 whitespace-pre-line text-zinc-200">{profile.bio}</p>}
+      <p className="mt-6 flex gap-5 text-sm text-zinc-400">
+        <Link href={`/@${profile.username}/following`} className="hover:underline">
+          {t.rich('followingCount', {
+            count: profile.followingCount,
+            strong: (chunks) => <strong className="text-zinc-100">{chunks}</strong>,
+          })}
+        </Link>
+        <Link href={`/@${profile.username}/followers`} className="hover:underline">
+          {t.rich('followersCount', {
+            count: profile.followersCount,
+            strong: (chunks) => <strong className="text-zinc-100">{chunks}</strong>,
+          })}
+        </Link>
+      </p>
+
+      {profile.bio && <p className="mt-4 whitespace-pre-line text-zinc-200">{profile.bio}</p>}
 
       <dl className="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-sm text-zinc-400">
         {profile.location && (
@@ -99,11 +124,13 @@ export default async function ProfilePage({
           <h2 className="text-sm font-semibold text-zinc-300">{t('stack')}</h2>
           <ul className="mt-3 flex flex-wrap gap-2">
             {profile.technologies.map((tech) => (
-              <li
-                key={tech}
-                className="rounded-full border border-zinc-700 px-3 py-1 font-mono text-xs text-zinc-200"
-              >
-                #{tech}
+              <li key={tech}>
+                <Link
+                  href={`/tags/${tech}`}
+                  className="block rounded-full border border-zinc-700 px-3 py-1 font-mono text-xs text-zinc-200 hover:border-emerald-400"
+                >
+                  #{tech}
+                </Link>
               </li>
             ))}
           </ul>

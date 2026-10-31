@@ -122,6 +122,19 @@ const routes = {
     request: { params: z.object({ username: z.string() }), query: PageQuery },
     responses: { 200: { description: 'A page of posts', content: json(PostPageSchema) } },
   }),
+  feed: createRoute({
+    method: 'get',
+    path: '/api/feed',
+    tags: ['Posts'],
+    summary: 'The "Following" feed: your posts, people you follow and tags you follow',
+    middleware: [requireSession] as const,
+    request: { query: PageQuery },
+    responses: {
+      200: { description: 'A page of posts, newest first', content: json(PostPageSchema) },
+      ...notSignedIn,
+      409: { description: 'The account has no username yet' },
+    },
+  }),
   byTag: createRoute({
     method: 'get',
     path: '/api/tags/{name}/posts',
@@ -171,6 +184,14 @@ export const postRoutes = new OpenAPIHono<AppEnv>()
     const page = await listPosts(
       c.var.deps.db,
       { kind: 'author', username },
+      { before: c.req.valid('query').before },
+    );
+    return c.json(page, 200);
+  })
+  .openapi(routes.feed, async (c) => {
+    const page = await listPosts(
+      c.var.deps.db,
+      { kind: 'feed', actorId: await requireActorId(c) },
       { before: c.req.valid('query').before },
     );
     return c.json(page, 200);

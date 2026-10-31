@@ -377,8 +377,8 @@ Ficou para depois (anotado para os próximos marcos):
 Um PR por etapa, nesta ordem:
 
 1. [x] **Perfil técnico:** tabela de atores pronta para a federação ([ADR 0007](adr/0007-atores-e-perfis.md)), página pública em `/@usuario`, edição de perfil (nome, bio, local, links, tecnologias), escolha de nome de usuário para contas do GitHub/GitLab, proteção contra CSRF na API.
-2. [ ] **Posts em Markdown:** publicar, editar e excluir; HTML sanitizado gerado no servidor; destaque de sintaxe; hashtags viram tags; posts no perfil e página do post.
-3. [ ] **Seguir pessoas e tags:** seguir e deixar de seguir, contadores no perfil, página da tag.
+2. [x] **Posts em Markdown:** publicar (com pré-visualização), editar e excluir; HTML sanitizado gerado no servidor; destaque de sintaxe; hashtags viram tags; posts no perfil, página do post e página da tag. Detalhes no [ADR 0003](adr/0003-modelo-de-conteudo.md).
+3. [ ] **Seguir pessoas e tags:** seguir e deixar de seguir, contadores no perfil, botão de seguir na página da tag.
 4. [ ] **Feed "Seguindo":** posts de quem você segue e das tags que você segue, em ordem cronológica, com paginação por cursor.
 
-Ficou para depois: upload de avatar (módulo de mídia), repositórios fixados do GitHub e lista curada de tecnologias (M4).
+Ficou para depois: upload de avatar e de imagens nos posts (módulo de mídia), repositórios fixados do GitHub e lista curada de tecnologias (M4), limite de posts por minuto (anti-spam, antes do beta).

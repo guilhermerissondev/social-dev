@@ -3,18 +3,17 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getFormatter, getTranslations } from 'next-intl/server';
 
+import { PostList } from '@/components/posts/post-list.tsx';
 import { Avatar } from '@/components/profile/avatar.tsx';
 import { Link } from '@/i18n/navigation.ts';
+import { queryValue, usernameFromSegment } from '@/lib/handles.ts';
+import { listProfilePosts } from '@/lib/posts.ts';
 import { getProfile } from '@/lib/profiles.ts';
 import { getSessionUser } from '@/lib/session.ts';
 
 /** Profiles live at /@username. Any other single segment is not a page. */
 async function profileFromParams(params: PageProps<'/[locale]/[handle]'>['params']) {
-  const { handle } = await params;
-  const decoded = decodeURIComponent(handle);
-  if (!decoded.startsWith('@')) notFound();
-
-  const profile = await getProfile(decoded.slice(1));
+  const profile = await getProfile(usernameFromSegment((await params).handle));
   if (!profile) notFound();
   return profile;
 }
@@ -29,12 +28,17 @@ export async function generateMetadata({
   };
 }
 
-export default async function ProfilePage({ params }: PageProps<'/[locale]/[handle]'>) {
+export default async function ProfilePage({
+  params,
+  searchParams,
+}: PageProps<'/[locale]/[handle]'>) {
   const profile = await profileFromParams(params);
-  const [t, format, viewer] = await Promise.all([
+  const before = queryValue((await searchParams).before);
+  const [t, format, viewer, posts] = await Promise.all([
     getTranslations('Profile'),
     getFormatter(),
     getSessionUser(),
+    listProfilePosts(profile.username, before),
   ]);
   const isOwner = viewer?.username === profile.username.toLowerCase();
 
@@ -105,6 +109,13 @@ export default async function ProfilePage({ params }: PageProps<'/[locale]/[hand
           </ul>
         </section>
       )}
+
+      <section className="mt-12">
+        <h2 className="border-b border-zinc-800 pb-3 text-sm font-semibold text-zinc-300">
+          {t('posts')}
+        </h2>
+        <PostList page={posts} olderHref={(cursor) => `?before=${cursor}`} empty={t('noPosts')} />
+      </section>
     </div>
   );
 }

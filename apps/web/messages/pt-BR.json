@@ -108,7 +108,9 @@
     "edit": "Editar perfil",
     "location": "Local",
     "joined": "Na Social Dev desde",
-    "stack": "Stack"
+    "stack": "Stack",
+    "posts": "Posts",
+    "noPosts": "Nenhum post ainda."
   },
   "ProfileForm": {
     "title": "Editar perfil",
@@ -141,5 +143,36 @@
       "invalid": "Use de 3 a 30 caracteres: letras, números e _.",
       "unknown": "Algo deu errado. Tente de novo."
     }
+  },
+  "Post": {
+    "edited": "editado",
+    "readMore": "Continuar lendo",
+    "older": "Posts mais antigos",
+    "edit": "Editar",
+    "delete": "Excluir",
+    "confirmDelete": "Excluir este post? Não dá para desfazer.",
+    "deleteFailed": "Não foi possível excluir o post. Tente de novo."
+  },
+  "Composer": {
+    "title": "Título",
+    "addTitle": "Adicionar título",
+    "content": "Conteúdo do post",
+    "placeholder": "O que você está construindo?",
+    "mode": "Modo de edição",
+    "write": "Escrever",
+    "preview": "Pré-visualizar",
+    "nothingToPreview": "Nada para pré-visualizar.",
+    "markdownHint": "Markdown com blocos de código. Use #tags para aparecer nos tópicos.",
+    "publish": "Publicar",
+    "save": "Salvar",
+    "editTitle": "Editar post",
+    "errors": {
+      "tooLong": "O post pode ter no máximo {max} caracteres.",
+      "invalid": "Confira o post e tente de novo.",
+      "unknown": "Algo deu errado. Tente de novo."
+    }
+  },
+  "Tag": {
+    "noPosts": "Nenhum post com esta tag ainda."
   }
 }

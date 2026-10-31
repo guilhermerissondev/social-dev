@@ -14,6 +14,8 @@ export default getRequestConfig(async () => {
 
   return {
     locale,
+    // Dates render on the server, whose clock may be UTC. Brazil first; a per-user setting comes later.
+    timeZone: 'America/Sao_Paulo',
     messages: ((await import(`../../messages/${locale}.json`)) as { default: Messages }).default,
   };
 });

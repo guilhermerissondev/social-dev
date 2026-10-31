@@ -6,6 +6,7 @@ import { useState } from 'react';
 
 import { authClient } from '@/lib/auth-client.ts';
 import type { OAuthProvider } from '@/lib/session.ts';
+import { useHydrated } from '@/lib/use-hydrated.ts';
 
 const labels: Record<OAuthProvider, string> = { github: 'GitHub', gitlab: 'GitLab' };
 
@@ -17,6 +18,7 @@ export function SocialButtons({
   callbackURL: string;
 }) {
   const t = useTranslations('Auth');
+  const hydrated = useHydrated();
   const [pending, setPending] = useState<OAuthProvider | null>(null);
 
   if (providers.length === 0) return null;
@@ -27,7 +29,7 @@ export function SocialButtons({
         <Button
           key={provider}
           variant="secondary"
-          disabled={pending !== null}
+          disabled={pending !== null || !hydrated}
           onClick={() => {
             setPending(provider);
             void authClient.signIn.social({ provider, callbackURL });

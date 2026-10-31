@@ -9,6 +9,7 @@ import { useRouter } from '@/i18n/navigation.ts';
 import { apiErrorCode } from '@/lib/api-errors.ts';
 
 import { PostBody } from './post-body.tsx';
+import { useHydrated } from '@/lib/use-hydrated.ts';
 
 interface ComposerProps {
   /** When set, the composer edits this post instead of creating a new one. */
@@ -30,6 +31,7 @@ type FormError = 'tooLong' | 'invalid' | 'unknown';
 
 export function PostComposer({ post, replyToId, onPublished }: ComposerProps) {
   const t = useTranslations('Composer');
+  const hydrated = useHydrated();
   const format = useFormatter();
   const router = useRouter();
   const contentId = useId();
@@ -170,6 +172,8 @@ export function PostComposer({ post, replyToId, onPublished }: ComposerProps) {
               setContent(event.target.value);
             }}
             rows={post ? 16 : replyToId ? 3 : 5}
+            // Controlled by React: text typed before hydration would be lost.
+            disabled={!hydrated}
             required
             placeholder={replyToId ? t('replyPlaceholder') : t('placeholder')}
             className="font-mono"
@@ -189,7 +193,7 @@ export function PostComposer({ post, replyToId, onPublished }: ComposerProps) {
           >
             {format.number(count)} / {format.number(POST_LIMITS.content)}
           </span>
-          <Button type="submit" disabled={pending || !content.trim()}>
+          <Button type="submit" disabled={pending || !hydrated || !content.trim()}>
             {post ? t('save') : replyToId ? t('reply') : t('publish')}
           </Button>
         </div>

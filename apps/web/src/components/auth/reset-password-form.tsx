@@ -8,9 +8,11 @@ import { Link } from '@/i18n/navigation.ts';
 import { authClient } from '@/lib/auth-client.ts';
 import { authErrorKey, type AuthErrorKey } from '@/lib/auth-errors.ts';
 import { formText } from '@/lib/form.ts';
+import { useHydrated } from '@/lib/use-hydrated.ts';
 
 export function ResetPasswordForm({ token }: { token: string | null }) {
   const t = useTranslations('Auth');
+  const hydrated = useHydrated();
   const [error, setError] = useState<AuthErrorKey | null>(null);
   const [done, setDone] = useState(false);
   const [pending, setPending] = useState(false);
@@ -69,7 +71,7 @@ export function ResetPasswordForm({ token }: { token: string | null }) {
         minLength={8}
         maxLength={128}
       />
-      <Button type="submit" disabled={pending}>
+      <Button type="submit" disabled={pending || !hydrated}>
         {t('resetPassword.submit')}
       </Button>
     </form>

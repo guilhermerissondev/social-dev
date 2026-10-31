@@ -10,6 +10,7 @@ import { apiErrorCode } from '@/lib/api-errors.ts';
 import { formText } from '@/lib/form.ts';
 
 import type { Profile } from '@/lib/profiles.ts';
+import { useHydrated } from '@/lib/use-hydrated.ts';
 
 type FormError = 'invalidTechnologies' | 'invalid' | 'unknown';
 
@@ -24,6 +25,7 @@ function parseTechnologies(value: string) {
 
 export function ProfileForm({ profile }: { profile: Profile }) {
   const t = useTranslations('ProfileForm');
+  const hydrated = useHydrated();
   const router = useRouter();
   const [error, setError] = useState<{ type: FormError; detail?: string } | null>(null);
   const [pending, setPending] = useState(false);
@@ -131,7 +133,7 @@ export function ProfileForm({ profile }: { profile: Profile }) {
         })}
       </fieldset>
 
-      <Button type="submit" disabled={pending}>
+      <Button type="submit" disabled={pending || !hydrated}>
         {t('submit')}
       </Button>
     </form>

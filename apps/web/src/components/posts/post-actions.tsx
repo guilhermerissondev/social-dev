@@ -5,6 +5,7 @@ import { useFormatter, useTranslations } from 'next-intl';
 import { useState, type ReactNode } from 'react';
 
 import { Link } from '@/i18n/navigation.ts';
+import { useHydrated } from '@/lib/use-hydrated.ts';
 
 export interface PostActionsProps {
   postId: string;
@@ -118,6 +119,7 @@ export function PostActions({
   fallbackHref,
 }: PostActionsProps) {
   const t = useTranslations('PostActions');
+  const hydrated = useHydrated();
   const format = useFormatter();
   const like = useToggle(liked, `/api/posts/${postId}/like`);
   const repost = useToggle(reposted, `/api/posts/${postId}/repost`);
@@ -146,7 +148,7 @@ export function PostActions({
         type="button"
         aria-label={label}
         aria-pressed={pressed}
-        disabled={pending}
+        disabled={pending || !hydrated}
         onClick={onClick}
         className={cn(actionClasses, pressed && activeClass)}
       >

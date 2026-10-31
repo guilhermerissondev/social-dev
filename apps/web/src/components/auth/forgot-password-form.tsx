@@ -8,9 +8,11 @@ import { getPathname, Link } from '@/i18n/navigation.ts';
 import { authClient } from '@/lib/auth-client.ts';
 import { authErrorKey, type AuthErrorKey } from '@/lib/auth-errors.ts';
 import { formText } from '@/lib/form.ts';
+import { useHydrated } from '@/lib/use-hydrated.ts';
 
 export function ForgotPasswordForm() {
   const t = useTranslations('Auth');
+  const hydrated = useHydrated();
   const locale = useLocale();
   const [error, setError] = useState<AuthErrorKey | null>(null);
   const [sent, setSent] = useState(false);
@@ -56,7 +58,7 @@ export function ForgotPasswordForm() {
         autoComplete="email"
         required
       />
-      <Button type="submit" disabled={pending}>
+      <Button type="submit" disabled={pending || !hydrated}>
         {t('forgotPassword.submit')}
       </Button>
       <Link href="/login" className="text-center text-sm text-emerald-400 hover:underline">

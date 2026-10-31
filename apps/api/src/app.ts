@@ -12,6 +12,7 @@ import { directoryRoutes } from './modules/directory/routes.ts';
 import { exploreRoutes } from './modules/explore/routes.ts';
 import { interactionRoutes } from './modules/interactions/routes.ts';
 import { notificationRoutes } from './modules/notifications/routes.ts';
+import { onboardingRoutes } from './modules/onboarding/routes.ts';
 import { postRoutes } from './modules/posts/routes.ts';
 import { profileRoutes } from './modules/profiles/routes.ts';
 import { searchRoutes } from './modules/search/routes.ts';
@@ -87,6 +88,7 @@ export function createApp(deps: AppDeps) {
   app.route('/', exploreRoutes);
   app.route('/', searchRoutes);
   app.route('/', directoryRoutes);
+  app.route('/', onboardingRoutes);
 
   app.doc31('/openapi.json', {
     openapi: '3.1.0',

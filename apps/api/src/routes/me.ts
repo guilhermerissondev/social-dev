@@ -11,6 +11,7 @@ const MeSchema = z
     email: z.email(),
     emailVerified: z.boolean(),
     image: z.string().nullable(),
+    onboardingCompletedAt: z.iso.datetime().nullable(),
   })
   .openapi('Me');
 
@@ -37,6 +38,7 @@ export const meRoutes = new OpenAPIHono<AppEnv>().openapi(route, (c) => {
       email: user.email,
       emailVerified: user.emailVerified,
       image: user.image ?? null,
+      onboardingCompletedAt: user.onboardingCompletedAt?.toISOString() ?? null,
     },
     200,
   );

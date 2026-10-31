@@ -1,0 +1,69 @@
+import { OpenAPIHono } from '@hono/zod-openapi';
+import type { Database } from '@social-dev/db';
+import { requestId } from 'hono/request-id';
+
+import { AppError, errorBody } from './errors.ts';
+import type { Logger } from './logger.ts';
+import { healthRoutes } from './routes/health.ts';
+
+export interface AppDeps {
+  db: Database;
+  logger: Logger;
+}
+
+export interface AppEnv {
+  Variables: {
+    deps: AppDeps;
+    requestId: string;
+  };
+}
+
+export function createApp(deps: AppDeps) {
+  const app = new OpenAPIHono<AppEnv>({
+    defaultHook: (result, c) => {
+      if (!result.success) {
+        return c.json(
+          errorBody('validation_error', result.error.issues[0]?.message ?? 'Invalid request'),
+          400,
+        );
+      }
+      return undefined;
+    },
+  });
+
+  app.use(requestId());
+  app.use(async (c, next) => {
+    c.set('deps', deps);
+    const start = performance.now();
+    await next();
+    deps.logger.info(
+      {
+        requestId: c.var.requestId,
+        method: c.req.method,
+        path: c.req.path,
+        status: c.res.status,
+        durationMs: Math.round(performance.now() - start),
+      },
+      'request completed',
+    );
+  });
+
+  app.route('/', healthRoutes);
+
+  app.doc31('/openapi.json', {
+    openapi: '3.1.0',
+    info: { title: 'Social Dev API', version: '0.0.0' },
+  });
+
+  app.notFound((c) => c.json(errorBody('not_found', 'Route not found'), 404));
+
+  app.onError((error, c) => {
+    if (error instanceof AppError) {
+      return c.json(errorBody(error.code, error.message), error.status);
+    }
+    deps.logger.error({ err: error, requestId: c.var.requestId }, 'unhandled error');
+    return c.json(errorBody('internal_error', 'Something went wrong'), 500);
+  });
+
+  return app;
+}

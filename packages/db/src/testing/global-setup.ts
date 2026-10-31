@@ -7,6 +7,10 @@ declare module 'vitest' {
   }
 }
 
+/**
+ * Vitest global setup that starts a throwaway PostgreSQL container and exposes its
+ * connection string to tests through `inject('databaseUrl')`.
+ */
 export default async function setup(project: TestProject) {
   const container = await new PostgreSqlContainer('postgres:18-alpine').start();
   project.provide('databaseUrl', container.getConnectionUri());

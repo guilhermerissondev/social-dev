@@ -8,7 +8,7 @@ import { PostList } from '@/components/posts/post-list.tsx';
 import { queryValue } from '@/lib/handles.ts';
 import { listTagPosts } from '@/lib/posts.ts';
 import { getTag } from '@/lib/tags.ts';
-import { followFallbackHref } from '@/lib/viewer.ts';
+import { actionFallbackHref } from '@/lib/viewer.ts';
 
 async function tagFromParams(params: PageProps<'/[locale]/tags/[tag]'>['params']) {
   const tag = normalizeTag(decodeURIComponent((await params).tag));
@@ -29,7 +29,7 @@ export default async function TagPage({ params, searchParams }: PageProps<'/[loc
     getTranslations('Tag'),
     getTag(tag),
     listTagPosts(tag, before),
-    followFallbackHref(),
+    actionFallbackHref(),
   ]);
   if (!info) notFound();
 
@@ -49,7 +49,12 @@ export default async function TagPage({ params, searchParams }: PageProps<'/[loc
           label={t('followLabel', { tag })}
         />
       </header>
-      <PostList page={posts} olderHref={(cursor) => `?before=${cursor}`} empty={t('noPosts')} />
+      <PostList
+        page={posts}
+        olderHref={(cursor) => `?before=${cursor}`}
+        empty={t('noPosts')}
+        fallbackHref={fallbackHref}
+      />
     </div>
   );
 }

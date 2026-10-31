@@ -1,0 +1,138 @@
+'use client';
+
+import { cn } from '@social-dev/ui';
+import { useFormatter, useTranslations } from 'next-intl';
+import { useState, type ReactNode } from 'react';
+
+import { Link } from '@/i18n/navigation.ts';
+
+export interface PostActionsProps {
+  postId: string;
+  likesCount: number;
+  liked: boolean;
+  bookmarked: boolean;
+  /** Set when the viewer cannot act yet; the buttons become links there. */
+  fallbackHref: '/login' | '/welcome' | null;
+}
+
+function HeartIcon({ filled }: { filled: boolean }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden
+      className="size-5"
+      fill={filled ? 'currentColor' : 'none'}
+      stroke="currentColor"
+      strokeWidth="2"
+    >
+      <path
+        d="M12 20s-7-4.35-7-10a4 4 0 0 1 7-2.65A4 4 0 0 1 19 10c0 5.65-7 10-7 10Z"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function BookmarkIcon({ filled }: { filled: boolean }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden
+      className="size-5"
+      fill={filled ? 'currentColor' : 'none'}
+      stroke="currentColor"
+      strokeWidth="2"
+    >
+      <path d="M6 4h12v16l-6-4-6 4V4Z" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+const actionClasses =
+  'inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-sm text-zinc-400 transition-colors hover:bg-zinc-900 hover:text-zinc-100 disabled:opacity-50';
+
+/** A toggle that flips right away and rolls back if the request fails. */
+function useToggle(initial: boolean, apiPath: string) {
+  const [on, setOn] = useState(initial);
+  const [pending, setPending] = useState(false);
+
+  async function toggle(): Promise<boolean> {
+    const next = !on;
+    setOn(next);
+    setPending(true);
+    const res = await fetch(apiPath, { method: next ? 'POST' : 'DELETE' });
+    setPending(false);
+    if (!res.ok) setOn(!next);
+    return res.ok;
+  }
+
+  return { on, pending, toggle };
+}
+
+export function PostActions({
+  postId,
+  likesCount,
+  liked,
+  bookmarked,
+  fallbackHref,
+}: PostActionsProps) {
+  const t = useTranslations('PostActions');
+  const format = useFormatter();
+  const like = useToggle(liked, `/api/posts/${postId}/like`);
+  const bookmark = useToggle(bookmarked, `/api/posts/${postId}/bookmark`);
+  // Count shown = server count, adjusted when the viewer's like changes on this page.
+  const count = likesCount + (like.on === liked ? 0 : like.on ? 1 : -1);
+
+  function action(
+    label: string,
+    pressed: boolean,
+    content: ReactNode,
+    onClick: () => void,
+    pending: boolean,
+    activeClass: string,
+  ) {
+    if (fallbackHref) {
+      return (
+        <Link href={fallbackHref} aria-label={label} className={actionClasses}>
+          {content}
+        </Link>
+      );
+    }
+    return (
+      <button
+        type="button"
+        aria-label={label}
+        aria-pressed={pressed}
+        disabled={pending}
+        onClick={onClick}
+        className={cn(actionClasses, pressed && activeClass)}
+      >
+        {content}
+      </button>
+    );
+  }
+
+  return (
+    <div className="mt-3 flex gap-2">
+      {action(
+        t('like'),
+        like.on,
+        <>
+          <HeartIcon filled={like.on} />
+          <span className="tabular-nums">{format.number(count)}</span>
+        </>,
+        () => void like.toggle(),
+        like.pending,
+        'text-rose-400 hover:text-rose-300',
+      )}
+      {action(
+        t('bookmark'),
+        bookmark.on,
+        <BookmarkIcon filled={bookmark.on} />,
+        () => void bookmark.toggle(),
+        bookmark.pending,
+        'text-emerald-400 hover:text-emerald-300',
+      )}
+    </div>
+  );
+}

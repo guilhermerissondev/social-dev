@@ -10,6 +10,7 @@ import { Link } from '@/i18n/navigation.ts';
 import { usernameFromSegment } from '@/lib/handles.ts';
 import { getPost } from '@/lib/posts.ts';
 import { getSessionUser } from '@/lib/session.ts';
+import { actionFallbackHref } from '@/lib/viewer.ts';
 
 type Params = PageProps<'/[locale]/[handle]/[postId]'>['params'];
 
@@ -44,12 +45,16 @@ export async function generateMetadata({
 
 export default async function PostPage({ params }: PageProps<'/[locale]/[handle]/[postId]'>) {
   const post = await postFromParams(params);
-  const [t, viewer] = await Promise.all([getTranslations('Post'), getSessionUser()]);
+  const [t, viewer, fallbackHref] = await Promise.all([
+    getTranslations('Post'),
+    getSessionUser(),
+    actionFallbackHref(),
+  ]);
   const isAuthor = viewer?.username === post.author.username.toLowerCase();
 
   return (
     <div className="mx-auto max-w-2xl px-6 py-8">
-      <PostCard post={post} full />
+      <PostCard post={post} fallbackHref={fallbackHref} full />
       {isAuthor && (
         <div className="mt-4 flex gap-3">
           <Link href={`${postPath(post)}/edit`} className={buttonClasses('secondary')}>

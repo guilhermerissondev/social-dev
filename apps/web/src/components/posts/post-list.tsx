@@ -9,10 +9,12 @@ export function PostList({
   page,
   olderHref,
   empty,
+  fallbackHref,
 }: {
   page: PostPage;
   olderHref: (cursor: string) => string;
   empty: string;
+  fallbackHref: '/login' | '/welcome' | null;
 }) {
   const t = useTranslations('Post');
 
@@ -23,7 +25,7 @@ export function PostList({
   return (
     <div>
       {page.items.map((post) => (
-        <PostCard key={post.id} post={post} />
+        <PostCard key={post.id} post={post} fallbackHref={fallbackHref} />
       ))}
       {page.nextCursor && (
         <div className="py-6 text-center">

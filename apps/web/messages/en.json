@@ -9,7 +9,9 @@
     "signup": "Sign up",
     "language": "Language",
     "logout": "Log out",
-    "profile": "Your profile"
+    "profile": "Your profile",
+    "feed": "Home",
+    "saved": "Saved"
   },
   "Home": {
     "title": "The social network for people who build software.",
@@ -192,5 +194,14 @@
     "followersEmpty": "Nobody follows this account yet.",
     "followingEmpty": "This account does not follow anyone yet.",
     "more": "Show more"
+  },
+  "PostActions": {
+    "like": "Like",
+    "bookmark": "Save"
+  },
+  "Saved": {
+    "title": "Saved",
+    "subtitle": "Only you can see the posts you saved.",
+    "empty": "You have not saved any posts yet. Use the bookmark icon on a post to keep it here."
   }
 }

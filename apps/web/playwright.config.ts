@@ -24,6 +24,8 @@ export default defineConfig({
   projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
   webServer: [
     {
+      // Locally an API that is already running is reused. Start it with AUTH_RATE_LIMIT=false,
+      // or the many sign-ups in the suite hit the auth rate limit (HTTP 429).
       command: 'pnpm --filter @social-dev/api start',
       url: 'http://localhost:4000/health',
       env: { AUTH_RATE_LIMIT: 'false' },

@@ -4,6 +4,7 @@ import { Avatar } from '@/components/profile/avatar.tsx';
 import { Link } from '@/i18n/navigation.ts';
 import type { Post } from '@/lib/posts.ts';
 
+import { PostActions } from './post-actions.tsx';
 import { PostBody } from './post-body.tsx';
 
 // Posts longer than this are cut in lists, with a link to the full post.
@@ -24,7 +25,16 @@ export function postPath(post: Pick<Post, 'id' | 'author'>) {
  * A post with its author. In lists (`full` false) long posts are collapsed; on the post
  * page they show in full and the title is the page heading.
  */
-export function PostCard({ post, full = false }: { post: Post; full?: boolean }) {
+export function PostCard({
+  post,
+  fallbackHref,
+  full = false,
+}: {
+  post: Post;
+  /** Where Like and Save send viewers who cannot use them; see `actionFallbackHref`. */
+  fallbackHref: '/login' | '/welcome' | null;
+  full?: boolean;
+}) {
   const t = useTranslations('Post');
   const format = useFormatter();
   const collapsed = !full && isLong(post.content);
@@ -74,6 +84,13 @@ export function PostCard({ post, full = false }: { post: Post; full?: boolean })
           {t('readMore')}
         </Link>
       )}
+      <PostActions
+        postId={post.id}
+        likesCount={post.likesCount}
+        liked={post.likedByViewer}
+        bookmarked={post.bookmarkedByViewer}
+        fallbackHref={fallbackHref}
+      />
     </article>
   );
 }

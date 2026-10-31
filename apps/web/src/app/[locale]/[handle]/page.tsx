@@ -11,7 +11,7 @@ import { queryValue, usernameFromSegment } from '@/lib/handles.ts';
 import { listProfilePosts } from '@/lib/posts.ts';
 import { getProfile } from '@/lib/profiles.ts';
 import { getSessionUser } from '@/lib/session.ts';
-import { followFallbackHref } from '@/lib/viewer.ts';
+import { actionFallbackHref } from '@/lib/viewer.ts';
 
 /** Profiles live at /@username. Any other single segment is not a page. */
 async function profileFromParams(params: PageProps<'/[locale]/[handle]'>['params']) {
@@ -41,7 +41,7 @@ export default async function ProfilePage({
     getFormatter(),
     getSessionUser(),
     listProfilePosts(profile.username, before),
-    followFallbackHref(),
+    actionFallbackHref(),
   ]);
   const isOwner = viewer?.username === profile.username.toLowerCase();
 
@@ -141,7 +141,12 @@ export default async function ProfilePage({
         <h2 className="border-b border-zinc-800 pb-3 text-sm font-semibold text-zinc-300">
           {t('posts')}
         </h2>
-        <PostList page={posts} olderHref={(cursor) => `?before=${cursor}`} empty={t('noPosts')} />
+        <PostList
+          page={posts}
+          olderHref={(cursor) => `?before=${cursor}`}
+          empty={t('noPosts')}
+          fallbackHref={fallbackHref}
+        />
       </section>
     </div>
   );

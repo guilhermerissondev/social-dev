@@ -66,3 +66,17 @@ export const postTags = pgTable(
     index().on(table.tagId, table.postId.desc()),
   ],
 );
+
+/** Local accounts mentioned in a post (ActivityPub `Mention` tags in M5). */
+export const postMentions = pgTable(
+  'post_mentions',
+  {
+    postId: uuid()
+      .notNull()
+      .references(() => posts.id, { onDelete: 'cascade' }),
+    actorId: uuid()
+      .notNull()
+      .references(() => actors.id, { onDelete: 'cascade' }),
+  },
+  (table) => [primaryKey({ columns: [table.postId, table.actorId] }), index().on(table.actorId)],
+);

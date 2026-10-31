@@ -1,5 +1,6 @@
 import { useId, type ComponentProps, type ReactNode } from 'react';
 
+import { cn } from './cn.ts';
 import { Input } from './input.tsx';
 import { Textarea } from './textarea.tsx';
 
@@ -54,6 +55,29 @@ export function TextareaField({ label, hint, id, ...props }: TextareaFieldProps)
   return (
     <FieldShell label={label} hint={hint} id={id}>
       {(control) => <Textarea {...control} {...props} />}
+    </FieldShell>
+  );
+}
+
+export interface SelectFieldProps extends ComponentProps<'select'> {
+  label: string;
+  hint?: string | undefined;
+}
+
+/** A labelled native select, styled like the inputs. */
+export function SelectField({ label, hint, id, className, ...props }: SelectFieldProps) {
+  return (
+    <FieldShell label={label} hint={hint} id={id}>
+      {(control) => (
+        <select
+          {...control}
+          className={cn(
+            'w-full rounded-md border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm text-zinc-100 focus:border-emerald-400 focus:outline-none',
+            className,
+          )}
+          {...props}
+        />
+      )}
     </FieldShell>
   );
 }

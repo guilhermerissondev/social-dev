@@ -5,6 +5,7 @@ import { getTranslations } from 'next-intl/server';
 
 import { FollowButton } from '@/components/follow-button.tsx';
 import { PostList } from '@/components/posts/post-list.tsx';
+import { Link } from '@/i18n/navigation.ts';
 import { queryValue } from '@/lib/handles.ts';
 import { listTagPosts } from '@/lib/posts.ts';
 import { getTag } from '@/lib/tags.ts';
@@ -41,6 +42,12 @@ export default async function TagPage({ params, searchParams }: PageProps<'/[loc
           <p className="mt-1 text-sm text-zinc-400">
             {t('followersCount', { count: info.followersCount })}
           </p>
+          <Link
+            href={`/directory?tech=${tag}`}
+            className="mt-1 inline-block text-sm text-emerald-400 hover:underline"
+          >
+            {t('directoryLink', { tag })}
+          </Link>
         </div>
         <FollowButton
           apiPath={`/api/tags/${tag}/follow`}

@@ -110,7 +110,10 @@
     "joined": "On Social Dev since",
     "stack": "Stack",
     "posts": "Posts",
-    "noPosts": "No posts yet."
+    "noPosts": "No posts yet.",
+    "followLabel": "Follow @{username}",
+    "followingCount": "<strong>{count, number}</strong> following",
+    "followersCount": "<strong>{count, number}</strong> {count, plural, one {follower} other {followers}}"
   },
   "ProfileForm": {
     "title": "Edit profile",
@@ -173,6 +176,20 @@
     }
   },
   "Tag": {
-    "noPosts": "No posts with this tag yet."
+    "noPosts": "No posts with this tag yet.",
+    "followLabel": "Follow #{tag}",
+    "followersCount": "{count, plural, =0 {Nobody follows this tag yet} one {# person follows this tag} other {# people follow this tag}}"
+  },
+  "Follow": {
+    "follow": "Follow",
+    "following": "Following",
+    "unfollow": "Unfollow"
+  },
+  "FollowList": {
+    "followers": "People following @{username}",
+    "following": "People @{username} follows",
+    "followersEmpty": "Nobody follows this account yet.",
+    "followingEmpty": "This account does not follow anyone yet.",
+    "more": "Show more"
   }
 }

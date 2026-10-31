@@ -378,7 +378,7 @@ Um PR por etapa, nesta ordem:
 
 1. [x] **Perfil técnico:** tabela de atores pronta para a federação ([ADR 0007](adr/0007-atores-e-perfis.md)), página pública em `/@usuario`, edição de perfil (nome, bio, local, links, tecnologias), escolha de nome de usuário para contas do GitHub/GitLab, proteção contra CSRF na API.
 2. [x] **Posts em Markdown:** publicar (com pré-visualização), editar e excluir; HTML sanitizado gerado no servidor; destaque de sintaxe; hashtags viram tags; posts no perfil, página do post e página da tag. Detalhes no [ADR 0003](adr/0003-modelo-de-conteudo.md).
-3. [ ] **Seguir pessoas e tags:** seguir e deixar de seguir, contadores no perfil, botão de seguir na página da tag.
+3. [x] **Seguir pessoas e tags:** seguir e deixar de seguir, contadores e listas de seguidores e seguidos no perfil, botão de seguir na página da tag. As tecnologias do perfil levam à página da tag. Os follows já ligam ator a ator, então seguidores remotos (M5) entram na mesma tabela; o estado "pendente" que o ActivityPub exige entra junto com a federação.
 4. [ ] **Feed "Seguindo":** posts de quem você segue e das tags que você segue, em ordem cronológica, com paginação por cursor.
 
 Ficou para depois: upload de avatar e de imagens nos posts (módulo de mídia), repositórios fixados do GitHub e lista curada de tecnologias (M4), limite de posts por minuto (anti-spam, antes do beta).

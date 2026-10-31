@@ -110,7 +110,10 @@
     "joined": "Na Social Dev desde",
     "stack": "Stack",
     "posts": "Posts",
-    "noPosts": "Nenhum post ainda."
+    "noPosts": "Nenhum post ainda.",
+    "followLabel": "Seguir @{username}",
+    "followingCount": "<strong>{count, number}</strong> seguindo",
+    "followersCount": "<strong>{count, number}</strong> {count, plural, =0 {seguidores} one {seguidor} other {seguidores}}"
   },
   "ProfileForm": {
     "title": "Editar perfil",
@@ -173,6 +176,20 @@
     }
   },
   "Tag": {
-    "noPosts": "Nenhum post com esta tag ainda."
+    "noPosts": "Nenhum post com esta tag ainda.",
+    "followLabel": "Seguir #{tag}",
+    "followersCount": "{count, plural, =0 {Ninguém segue esta tag ainda} one {# pessoa segue esta tag} other {# pessoas seguem esta tag}}"
+  },
+  "Follow": {
+    "follow": "Seguir",
+    "following": "Seguindo",
+    "unfollow": "Deixar de seguir"
+  },
+  "FollowList": {
+    "followers": "Seguidores de @{username}",
+    "following": "Quem @{username} segue",
+    "followersEmpty": "Ninguém segue esta conta ainda.",
+    "followingEmpty": "Esta conta ainda não segue ninguém.",
+    "more": "Ver mais"
   }
 }

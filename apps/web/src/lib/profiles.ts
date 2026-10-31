@@ -14,6 +14,22 @@ export interface Profile {
   technologies: string[];
   avatarUrl: string | null;
   createdAt: string;
+  followersCount: number;
+  followingCount: number;
+  followedByViewer: boolean;
+}
+
+export interface ProfileSummary {
+  id: string;
+  username: string;
+  displayName: string;
+  bio: string;
+  avatarUrl: string | null;
+}
+
+export interface ProfilePage {
+  items: ProfileSummary[];
+  nextCursor: string | null;
 }
 
 /** Public profile by handle, or null when it does not exist. Cached per request. */
@@ -23,3 +39,16 @@ export const getProfile = cache(async (username: string): Promise<Profile | null
   if (!res.ok) throw new Error(`failed to load profile: ${res.status}`);
   return (await res.json()) as Profile;
 });
+
+/** Followers or followed accounts of a profile. Null when the profile does not exist. */
+export async function listFollows(
+  username: string,
+  direction: 'followers' | 'following',
+  cursor?: string,
+): Promise<ProfilePage | null> {
+  const query = cursor ? `?cursor=${encodeURIComponent(cursor)}` : '';
+  const res = await apiFetch(`/api/profiles/${encodeURIComponent(username)}/${direction}${query}`);
+  if (res.status === 404) return null;
+  if (!res.ok) throw new Error(`failed to load ${direction}: ${res.status}`);
+  return (await res.json()) as ProfilePage;
+}

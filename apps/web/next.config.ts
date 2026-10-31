@@ -12,7 +12,7 @@ const apiUrl = process.env.API_URL ?? 'http://localhost:4000';
 const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
 
 const nextConfig: NextConfig = {
-  transpilePackages: ['@social-dev/ui'],
+  transpilePackages: ['@social-dev/shared', '@social-dev/ui'],
   typedRoutes: true,
   // The browser only talks to the web origin; API calls are proxied so auth cookies stay first-party.
   rewrites: () => Promise.resolve([{ source: '/api/:path*', destination: `${apiUrl}/api/:path*` }]),

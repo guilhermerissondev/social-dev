@@ -1,28 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
 
+import { newUser, signUp } from './accounts.ts';
 import { latestLinkSentTo } from './mailpit.ts';
-
-function newUser() {
-  const id = `${Date.now().toString(36)}${Math.floor(Math.random() * 1000)}`;
-  return {
-    name: 'Ada Lovelace',
-    username: `ada_${id}`,
-    email: `ada_${id}@example.com`,
-    password: 'correct horse battery staple',
-  };
-}
-
-type User = ReturnType<typeof newUser>;
-
-async function signUp(page: Page, user: User) {
-  await page.goto('/signup');
-  await page.getByLabel('Nome', { exact: true }).fill(user.name);
-  await page.getByLabel('Nome de usuário').fill(user.username);
-  await page.getByLabel('E-mail').fill(user.email);
-  await page.getByLabel('Senha', { exact: true }).fill(user.password);
-  await page.getByRole('button', { name: 'Criar conta' }).click();
-  await expect(page.getByRole('heading', { name: 'Confira seu e-mail' })).toBeVisible();
-}
 
 async function logIn(page: Page, identifier: string, password: string) {
   await page.goto('/login');

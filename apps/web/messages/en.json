@@ -103,5 +103,43 @@
   "Feed": {
     "title": "Hi, {name}!",
     "description": "Your account is ready. Posts from people you follow will show up here."
+  },
+  "Profile": {
+    "edit": "Edit profile",
+    "location": "Location",
+    "joined": "On Social Dev since",
+    "stack": "Stack"
+  },
+  "ProfileForm": {
+    "title": "Edit profile",
+    "subtitle": "This is how other people will find you on Social Dev.",
+    "displayName": "Name",
+    "bio": "Bio",
+    "bioHint": "Up to {max} characters.",
+    "location": "Location",
+    "technologies": "Technologies",
+    "technologiesHint": "Up to {max}, separated by commas. Use letters, numbers and _ (e.g. cpp, csharp, nodejs).",
+    "links": "Links",
+    "linkLabel": "Link {number} name",
+    "linkUrl": "Link {number} address",
+    "linkDefaultLabel": "Link",
+    "submit": "Save profile",
+    "errors": {
+      "invalidTechnologies": "These technologies are not valid: {detail}. Use only letters, numbers and _.",
+      "invalid": "Check the fields and try again.",
+      "unknown": "Something went wrong. Try again."
+    }
+  },
+  "Welcome": {
+    "title": "Welcome, {name}!",
+    "subtitle": "Just pick your username. It cannot be changed later.",
+    "username": "Username",
+    "usernameHint": "Letters, numbers and _. 3 to 30 characters. Shown as @username.",
+    "submit": "Continue",
+    "errors": {
+      "taken": "This username is already taken.",
+      "invalid": "Use 3 to 30 characters: letters, numbers and _.",
+      "unknown": "Something went wrong. Try again."
+    }
   }
 }

@@ -1,9 +1,9 @@
 import { getTranslations } from 'next-intl/server';
 
-import { requireUser } from '@/lib/guards.ts';
+import { requireUserWithUsername } from '@/lib/guards.ts';
 
 export default async function HomeFeedPage() {
-  const user = await requireUser();
+  const user = await requireUserWithUsername();
   const t = await getTranslations('Feed');
 
   return (

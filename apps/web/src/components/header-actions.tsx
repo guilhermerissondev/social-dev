@@ -19,7 +19,7 @@ export function HeaderActions() {
     return (
       <>
         <Link
-          href="/home"
+          href={handle ? `/@${handle}` : '/welcome'}
           className="text-sm text-zinc-300 hover:text-zinc-100"
           title={t('profile')}
         >

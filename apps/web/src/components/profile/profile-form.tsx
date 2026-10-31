@@ -1,0 +1,139 @@
+'use client';
+
+import { normalizeTag, PROFILE_LIMITS } from '@social-dev/shared';
+import { Alert, Button, Field, TextareaField } from '@social-dev/ui';
+import { useTranslations } from 'next-intl';
+import { useState, type SubmitEvent } from 'react';
+
+import { useRouter } from '@/i18n/navigation.ts';
+import { apiErrorCode } from '@/lib/api-errors.ts';
+import { formText } from '@/lib/form.ts';
+
+import type { Profile } from '@/lib/profiles.ts';
+
+type FormError = 'invalidTechnologies' | 'invalid' | 'unknown';
+
+/** Splits "TypeScript, #rust go" into names. Returns the invalid ones separately. */
+function parseTechnologies(value: string) {
+  const entries = value.split(/[\s,]+/).filter(Boolean);
+  return {
+    technologies: entries,
+    invalid: entries.filter((entry) => normalizeTag(entry) === null),
+  };
+}
+
+export function ProfileForm({ profile }: { profile: Profile }) {
+  const t = useTranslations('ProfileForm');
+  const router = useRouter();
+  const [error, setError] = useState<{ type: FormError; detail?: string } | null>(null);
+  const [pending, setPending] = useState(false);
+
+  async function onSubmit(event: SubmitEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const form = new FormData(event.currentTarget);
+
+    const { technologies, invalid } = parseTechnologies(formText(form, 'technologies'));
+    if (invalid.length > 0) {
+      setError({ type: 'invalidTechnologies', detail: invalid.join(', ') });
+      return;
+    }
+    if (technologies.length > PROFILE_LIMITS.technologies) {
+      setError({ type: 'invalid' });
+      return;
+    }
+
+    const links = Array.from({ length: PROFILE_LIMITS.links }, (_, index) => ({
+      label: formText(form, `link-label-${index}`).trim(),
+      url: formText(form, `link-url-${index}`).trim(),
+    })).filter((link) => link.url);
+
+    setPending(true);
+    setError(null);
+    const res = await fetch('/api/me/profile', {
+      method: 'PUT',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        displayName: formText(form, 'displayName'),
+        bio: formText(form, 'bio'),
+        location: formText(form, 'location'),
+        // A link without a label shows its address.
+        links: links.map((link) => ({ ...link, label: link.label || t('linkDefaultLabel') })),
+        technologies,
+      }),
+    });
+    setPending(false);
+
+    if (!res.ok) {
+      setError({ type: (await apiErrorCode(res)) === 'validation_error' ? 'invalid' : 'unknown' });
+      return;
+    }
+    router.push(`/@${profile.username}`);
+    router.refresh();
+  }
+
+  return (
+    <form onSubmit={(event) => void onSubmit(event)} className="flex flex-col gap-5">
+      {error && (
+        <Alert tone="error">{t(`errors.${error.type}`, { detail: error.detail ?? '' })}</Alert>
+      )}
+      <Field
+        label={t('displayName')}
+        name="displayName"
+        defaultValue={profile.displayName}
+        required
+        maxLength={PROFILE_LIMITS.displayName}
+      />
+      <TextareaField
+        label={t('bio')}
+        hint={t('bioHint', { max: PROFILE_LIMITS.bio })}
+        name="bio"
+        rows={4}
+        defaultValue={profile.bio}
+        maxLength={PROFILE_LIMITS.bio}
+      />
+      <Field
+        label={t('location')}
+        name="location"
+        defaultValue={profile.location}
+        maxLength={PROFILE_LIMITS.location}
+      />
+      <Field
+        label={t('technologies')}
+        hint={t('technologiesHint', { max: PROFILE_LIMITS.technologies })}
+        name="technologies"
+        defaultValue={profile.technologies.join(', ')}
+        placeholder="typescript, rust, postgresql"
+      />
+
+      <fieldset className="flex flex-col gap-3">
+        <legend className="mb-1.5 text-sm font-medium text-zinc-300">{t('links')}</legend>
+        {Array.from({ length: PROFILE_LIMITS.links }, (_, index) => {
+          const link = profile.links[index];
+          return (
+            <div key={index} className="grid grid-cols-[1fr_2fr] gap-2">
+              <Field
+                label={t('linkLabel', { number: index + 1 })}
+                name={`link-label-${index}`}
+                defaultValue={link?.label}
+                maxLength={PROFILE_LIMITS.linkLabel}
+                placeholder="GitHub"
+              />
+              <Field
+                label={t('linkUrl', { number: index + 1 })}
+                name={`link-url-${index}`}
+                type="url"
+                defaultValue={link?.url}
+                maxLength={PROFILE_LIMITS.linkUrl}
+                placeholder="https://"
+              />
+            </div>
+          );
+        })}
+      </fieldset>
+
+      <Button type="submit" disabled={pending}>
+        {t('submit')}
+      </Button>
+    </form>
+  );
+}

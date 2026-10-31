@@ -14,8 +14,14 @@ test('sign up, confirm the email, log out and log in again', async ({ page, requ
   const user = newUser();
   await signUp(page, user);
 
+  // New accounts start with onboarding; skipping every step opens the feed.
   await page.goto(await latestLinkSentTo(request, user.email));
-  await expect(page).toHaveURL(/\/home$/);
+  await expect(page).toHaveURL(/\/onboarding$/);
+  for (const step of ['Passo 1 de 3', 'Passo 2 de 3']) {
+    await expect(page.getByText(step)).toBeVisible();
+    await page.getByRole('link', { name: 'Pular esta etapa' }).click();
+  }
+  await page.getByRole('button', { name: 'Ir para o feed' }).click();
   await expect(page.getByRole('heading', { name: `Olá, ${user.name}!` })).toBeVisible();
   await expect(page.getByRole('link', { name: `@${user.username}` })).toBeVisible();
 
@@ -63,7 +69,9 @@ test('resets a forgotten password', async ({ page, request }) => {
   await expect(page.getByRole('status')).toContainText('Senha alterada');
 
   await logIn(page, user.email, 'a brand new password');
-  await expect(page.getByRole('heading', { name: `Olá, ${user.name}!` })).toBeVisible();
+  // This account never finished onboarding, so it lands there, signed in.
+  await expect(page).toHaveURL(/\/onboarding$/);
+  await expect(page.getByRole('link', { name: `@${user.username}` })).toBeVisible();
 });
 
 test('redirects anonymous visitors from the feed to the login page', async ({ page }) => {

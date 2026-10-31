@@ -108,7 +108,8 @@
   "Feed": {
     "title": "Hi, {name}!",
     "following": "Following",
-    "empty": "Your feed is empty. Follow people and tags, or start with <explore>Explore</explore>, and their posts show up here."
+    "empty": "Your feed is empty. Follow people and tags, or start with <explore>Explore</explore>, and their posts show up here.",
+    "whoToFollow": "Who to follow"
   },
   "Profile": {
     "edit": "Edit profile",
@@ -308,5 +309,30 @@
     "empty": "Nobody matches these filters.",
     "more": "Show more",
     "followers": "{count, plural, =0 {no followers} one {# follower} other {# followers}}"
+  },
+  "Onboarding": {
+    "title": "Getting started",
+    "progress": "Step {step} of {total}",
+    "profileTitle": "Tell us about you",
+    "profileSubtitle": "Your stack and area help find people like you. Everything is optional.",
+    "tagsTitle": "Tags to follow",
+    "tagsSubtitle": "Posts with these tags show up in your feed. Your stack's tags start selected.",
+    "peopleTitle": "People to follow",
+    "peopleSubtitle": "Suggested by your stack and the people you already follow.",
+    "technologies": "Technologies you use",
+    "technologiesHint": "Separated by commas. Letters, numbers and _ (e.g. cpp, csharp, nodejs).",
+    "notSaying": "Rather not say",
+    "invalidTechnologies": "These technologies are not valid: {detail}.",
+    "saveFailed": "Could not save. Try again.",
+    "noTags": "No tags to suggest yet. You can follow tags later from each tag's page.",
+    "noPeople": "No suggestions yet. You can find people in the directory.",
+    "continue": "Continue",
+    "skip": "Skip this step",
+    "finish": "Go to the feed"
+  },
+  "Suggestions": {
+    "sharedStack": "Also uses {tags}",
+    "followedByFollowing": "{count, plural, one {Followed by # person you follow} other {Followed by # people you follow}}",
+    "followLabel": "Follow @{username}"
   }
 }

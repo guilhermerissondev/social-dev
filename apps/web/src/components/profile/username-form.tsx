@@ -43,7 +43,7 @@ export function UsernameForm() {
     }
     // The header reads the session on the client; reload it so it shows the new handle.
     await refetch();
-    router.push('/home');
+    router.push('/onboarding');
     router.refresh();
   }
 

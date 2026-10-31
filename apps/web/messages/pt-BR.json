@@ -162,7 +162,8 @@
     "deleteFailed": "Não foi possível excluir o post. Tente de novo.",
     "inReplyTo": "Em resposta a <link>@{username}</link>",
     "comments": "{count, plural, =0 {Comentários} one {# comentário} other {# comentários}}",
-    "loginToComment": "Entre para comentar"
+    "loginToComment": "Entre para comentar",
+    "repostedBy": "<link>{name}</link> repostou"
   },
   "Composer": {
     "title": "Título",
@@ -206,7 +207,8 @@
   "PostActions": {
     "like": "Curtir",
     "bookmark": "Salvar",
-    "comments": "Comentários"
+    "comments": "Comentários",
+    "repost": "Repostar"
   },
   "Saved": {
     "title": "Salvos",
@@ -220,7 +222,8 @@
     "like": "<actor></actor> curtiu seu post",
     "unread": "não lida",
     "older": "Notificações mais antigas",
-    "reply": "<actor></actor> respondeu seu post"
+    "reply": "<actor></actor> respondeu seu post",
+    "repost": "<actor></actor> repostou seu post"
   },
   "Thread": {
     "reply": "Responder",

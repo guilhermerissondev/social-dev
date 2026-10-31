@@ -13,6 +13,8 @@ export interface PostActionsProps {
   repliesCount: number;
   likesCount: number;
   liked: boolean;
+  repostsCount: number;
+  reposted: boolean;
   bookmarked: boolean;
   /** Set when the viewer cannot act yet; the buttons become links there. */
   fallbackHref: '/login' | '/welcome' | null;
@@ -47,6 +49,23 @@ function CommentIcon() {
       strokeWidth="2"
     >
       <path d="M4 5h16v11H9l-5 4V5Z" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function RepostIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden
+      className="size-5"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M4 10V8a3 3 0 0 1 3-3h12m0 0-3-3m3 3-3 3M20 14v2a3 3 0 0 1-3 3H5m0 0 3 3m-3-3 3-3" />
     </svg>
   );
 }
@@ -93,15 +112,19 @@ export function PostActions({
   repliesCount,
   likesCount,
   liked,
+  repostsCount,
+  reposted,
   bookmarked,
   fallbackHref,
 }: PostActionsProps) {
   const t = useTranslations('PostActions');
   const format = useFormatter();
   const like = useToggle(liked, `/api/posts/${postId}/like`);
+  const repost = useToggle(reposted, `/api/posts/${postId}/repost`);
   const bookmark = useToggle(bookmarked, `/api/posts/${postId}/bookmark`);
-  // Count shown = server count, adjusted when the viewer's like changes on this page.
-  const count = likesCount + (like.on === liked ? 0 : like.on ? 1 : -1);
+  // Counts shown = server count, adjusted when the viewer's choice changes on this page.
+  const adjusted = (count: number, initial: boolean, on: boolean) =>
+    count + (on === initial ? 0 : on ? 1 : -1);
 
   function action(
     label: string,
@@ -139,11 +162,26 @@ export function PostActions({
         <span className="tabular-nums">{format.number(repliesCount)}</span>
       </Link>
       {action(
+        t('repost'),
+        repost.on,
+        <>
+          <RepostIcon />
+          <span className="tabular-nums">
+            {format.number(adjusted(repostsCount, reposted, repost.on))}
+          </span>
+        </>,
+        () => void repost.toggle(),
+        repost.pending,
+        'text-sky-400 hover:text-sky-300',
+      )}
+      {action(
         t('like'),
         like.on,
         <>
           <HeartIcon filled={like.on} />
-          <span className="tabular-nums">{format.number(count)}</span>
+          <span className="tabular-nums">
+            {format.number(adjusted(likesCount, liked, like.on))}
+          </span>
         </>,
         () => void like.toggle(),
         like.pending,

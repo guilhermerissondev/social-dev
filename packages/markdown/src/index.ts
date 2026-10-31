@@ -1,1 +1,6 @@
-export { renderMarkdown, type RenderedMarkdown, type RenderOptions } from './render.ts';
+export {
+  findMentions,
+  renderMarkdown,
+  type RenderedMarkdown,
+  type RenderOptions,
+} from './render.ts';

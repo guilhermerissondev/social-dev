@@ -1,6 +1,12 @@
 import { schema, type Database, type Executor } from '@social-dev/db';
 import { and, asc, eq, isNull, sql, type SQL } from '@social-dev/db/orm';
-import { normalizeTag, PROFILE_LIMITS, type UpdateProfileInput } from '@social-dev/shared';
+import {
+  normalizeTag,
+  PROFILE_LIMITS,
+  type Area,
+  type Seniority,
+  type UpdateProfileInput,
+} from '@social-dev/shared';
 
 import { upsertTags } from '../tags/service.ts';
 
@@ -23,6 +29,8 @@ export interface Profile {
   displayName: string;
   bio: string;
   location: string;
+  area: Area | null;
+  seniority: Seniority | null;
   links: { label: string; url: string }[];
   technologies: string[];
   avatarUrl: string | null;
@@ -95,6 +103,8 @@ export async function getLocalProfile(db: Database, username: string): Promise<P
       displayName: actors.displayName,
       bio: actors.bio,
       location: actors.location,
+      area: actors.area,
+      seniority: actors.seniority,
       links: actors.links,
       avatarUrl: users.image,
       createdAt: actors.createdAt,
@@ -142,6 +152,8 @@ export async function updateProfile(
         displayName: input.displayName,
         bio: input.bio,
         location: input.location,
+        area: input.area,
+        seniority: input.seniority,
         links: input.links,
       })
       .where(eq(actors.userId, userId))

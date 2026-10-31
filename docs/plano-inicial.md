@@ -372,6 +372,13 @@ Ficou para depois (anotado para os próximos marcos):
 - **IP real do cliente:** o proxy do Next.js em desenvolvimento não repassa o IP de quem acessa, então localmente todas as requisições dividem o mesmo limite de tentativas. Em produção, o proxy da frente (Cloudflare ou load balancer) precisa informar o IP real, configurado em `CLIENT_IP_HEADER`, e a API não pode ficar acessível diretamente. Decisão de infraestrutura do M7.
 - **E-mails em inglês:** os templates estão só em português até o idioma do usuário ser salvo no perfil.
 
-### 10.3 Próximo: M2 (núcleo social local)
+### 10.3 M2: núcleo social local (em andamento)
 
-Perfil técnico, posts em Markdown, seguir pessoas e tags, feed "Seguindo".
+Um PR por etapa, nesta ordem:
+
+1. [x] **Perfil técnico:** tabela de atores pronta para a federação ([ADR 0007](adr/0007-atores-e-perfis.md)), página pública em `/@usuario`, edição de perfil (nome, bio, local, links, tecnologias), escolha de nome de usuário para contas do GitHub/GitLab, proteção contra CSRF na API.
+2. [ ] **Posts em Markdown:** publicar, editar e excluir; HTML sanitizado gerado no servidor; destaque de sintaxe; hashtags viram tags; posts no perfil e página do post.
+3. [ ] **Seguir pessoas e tags:** seguir e deixar de seguir, contadores no perfil, página da tag.
+4. [ ] **Feed "Seguindo":** posts de quem você segue e das tags que você segue, em ordem cronológica, com paginação por cursor.
+
+Ficou para depois: upload de avatar (módulo de mídia), repositórios fixados do GitHub e lista curada de tecnologias (M4).

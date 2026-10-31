@@ -1,8 +1,8 @@
-import { buttonClasses } from '@social-dev/ui';
 import { useTranslations } from 'next-intl';
 
 import { Link } from '@/i18n/navigation.ts';
 
+import { HeaderActions } from './header-actions.tsx';
 import { LocaleSwitcher } from './locale-switcher.tsx';
 
 export function SiteHeader() {
@@ -17,12 +17,7 @@ export function SiteHeader() {
         </Link>
         <nav className="flex items-center gap-3">
           <LocaleSwitcher />
-          <Link href="/login" className={buttonClasses('secondary')}>
-            {t('login')}
-          </Link>
-          <Link href="/signup" className={buttonClasses('primary')}>
-            {t('signup')}
-          </Link>
+          <HeaderActions />
         </nav>
       </div>
     </header>

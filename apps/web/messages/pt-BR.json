@@ -7,7 +7,9 @@
     "home": "Página inicial",
     "login": "Entrar",
     "signup": "Criar conta",
-    "language": "Idioma"
+    "language": "Idioma",
+    "logout": "Sair",
+    "profile": "Seu perfil"
   },
   "Home": {
     "title": "A rede social de quem desenvolve software.",
@@ -31,5 +33,74 @@
   },
   "Footer": {
     "openSource": "Projeto de código aberto sob a licença GPL-3.0."
+  },
+  "Auth": {
+    "or": "ou",
+    "continueWith": "Continuar com {provider}",
+    "login": {
+      "title": "Entrar na Social Dev",
+      "identifier": "E-mail ou nome de usuário",
+      "password": "Senha",
+      "submit": "Entrar",
+      "forgotPassword": "Esqueci minha senha",
+      "noAccount": "Ainda não tem conta?",
+      "signupLink": "Criar conta"
+    },
+    "signup": {
+      "title": "Criar sua conta",
+      "subtitle": "Leva menos de um minuto.",
+      "name": "Nome",
+      "username": "Nome de usuário",
+      "usernameHint": "Letras, números e _. De 3 a 30 caracteres. Vai aparecer como @usuario.",
+      "email": "E-mail",
+      "password": "Senha",
+      "passwordHint": "No mínimo 8 caracteres.",
+      "submit": "Criar conta",
+      "hasAccount": "Já tem conta?",
+      "loginLink": "Entrar"
+    },
+    "checkEmail": {
+      "title": "Confira seu e-mail",
+      "description": "Enviamos um link de confirmação para o seu e-mail. Clique nele para ativar sua conta.",
+      "back": "Voltar para o login"
+    },
+    "forgotPassword": {
+      "title": "Esqueceu a senha?",
+      "description": "Informe seu e-mail e enviaremos um link para criar uma nova senha.",
+      "email": "E-mail",
+      "submit": "Enviar link",
+      "sent": "Se existir uma conta com esse e-mail, você vai receber um link para criar uma nova senha.",
+      "back": "Voltar para o login"
+    },
+    "resetPassword": {
+      "title": "Criar nova senha",
+      "password": "Nova senha",
+      "submit": "Salvar nova senha",
+      "success": "Senha alterada. Você já pode entrar.",
+      "invalidLink": "Este link é inválido ou expirou. Peça um novo.",
+      "requestNew": "Pedir novo link",
+      "login": "Ir para o login"
+    },
+    "errors": {
+      "EMAIL_NOT_VERIFIED": "Seu e-mail ainda não foi confirmado. Enviamos um novo link para a sua caixa de entrada.",
+      "INVALID_EMAIL": "E-mail inválido.",
+      "INVALID_EMAIL_OR_PASSWORD": "E-mail ou senha incorretos.",
+      "INVALID_USERNAME_OR_PASSWORD": "Nome de usuário ou senha incorretos.",
+      "INVALID_TOKEN": "Este link é inválido ou expirou.",
+      "INVALID_USERNAME": "Use apenas letras, números e _ no nome de usuário.",
+      "USERNAME_TOO_SHORT": "O nome de usuário precisa ter pelo menos 3 caracteres.",
+      "USERNAME_TOO_LONG": "O nome de usuário pode ter no máximo 30 caracteres.",
+      "USERNAME_IS_ALREADY_TAKEN": "Esse nome de usuário já está em uso.",
+      "USER_ALREADY_EXISTS": "Já existe uma conta com esse e-mail.",
+      "USER_ALREADY_EXISTS_USE_ANOTHER_EMAIL": "Já existe uma conta com esse e-mail.",
+      "PASSWORD_TOO_SHORT": "A senha precisa ter pelo menos 8 caracteres.",
+      "PASSWORD_TOO_LONG": "A senha pode ter no máximo 128 caracteres.",
+      "TOO_MANY_REQUESTS": "Muitas tentativas. Aguarde um pouco e tente de novo.",
+      "UNKNOWN": "Algo deu errado. Tente de novo."
+    }
+  },
+  "Feed": {
+    "title": "Olá, {name}!",
+    "description": "Sua conta está pronta. O feed com posts de quem você segue vai aparecer aqui."
   }
 }

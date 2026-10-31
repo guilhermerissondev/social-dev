@@ -1,5 +1,6 @@
 import 'server-only';
 
+import type { Area, Seniority } from '@social-dev/shared';
 import { cache } from 'react';
 
 import { apiFetch } from './api.ts';
@@ -10,6 +11,8 @@ export interface Profile {
   displayName: string;
   bio: string;
   location: string;
+  area: Area | null;
+  seniority: Seniority | null;
   links: { label: string; url: string }[];
   technologies: string[];
   avatarUrl: string | null;

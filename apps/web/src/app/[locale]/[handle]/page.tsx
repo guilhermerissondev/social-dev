@@ -87,10 +87,44 @@ export default async function ProfilePage({
       {profile.bio && <p className="mt-4 whitespace-pre-line text-zinc-200">{profile.bio}</p>}
 
       <dl className="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-sm text-zinc-400">
+        {/* Each detail links to the directory, filtered by it. */}
+        {profile.area && (
+          <div className="flex gap-1.5">
+            <dt>{t('area')}:</dt>
+            <dd>
+              <Link
+                href={`/directory?area=${profile.area}`}
+                className="text-zinc-200 hover:underline"
+              >
+                {t(`areas.${profile.area}`)}
+              </Link>
+            </dd>
+          </div>
+        )}
+        {profile.seniority && (
+          <div className="flex gap-1.5">
+            <dt>{t('seniority')}:</dt>
+            <dd>
+              <Link
+                href={`/directory?seniority=${profile.seniority}`}
+                className="text-zinc-200 hover:underline"
+              >
+                {t(`seniorities.${profile.seniority}`)}
+              </Link>
+            </dd>
+          </div>
+        )}
         {profile.location && (
           <div className="flex gap-1.5">
             <dt>{t('location')}:</dt>
-            <dd className="text-zinc-200">{profile.location}</dd>
+            <dd>
+              <Link
+                href={`/directory?location=${encodeURIComponent(profile.location)}`}
+                className="text-zinc-200 hover:underline"
+              >
+                {profile.location}
+              </Link>
+            </dd>
           </div>
         )}
         <div className="flex gap-1.5">

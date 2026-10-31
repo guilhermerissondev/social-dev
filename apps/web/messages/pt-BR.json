@@ -119,7 +119,30 @@
     "noPosts": "Nenhum post ainda.",
     "followLabel": "Seguir @{username}",
     "followingCount": "<strong>{count, number}</strong> seguindo",
-    "followersCount": "<strong>{count, number}</strong> {count, plural, =0 {seguidores} one {seguidor} other {seguidores}}"
+    "followersCount": "<strong>{count, number}</strong> {count, plural, =0 {seguidores} one {seguidor} other {seguidores}}",
+    "areas": {
+      "frontend": "Front-end",
+      "backend": "Back-end",
+      "fullstack": "Full-stack",
+      "mobile": "Mobile",
+      "data": "Dados",
+      "ai": "IA e machine learning",
+      "devops": "DevOps e infraestrutura",
+      "security": "Segurança",
+      "qa": "Qualidade (QA)",
+      "games": "Games",
+      "embedded": "Embarcados",
+      "other": "Outra área"
+    },
+    "seniorities": {
+      "student": "Estudante",
+      "junior": "Júnior",
+      "mid": "Pleno",
+      "senior": "Sênior",
+      "staff": "Staff, principal ou liderança técnica"
+    },
+    "area": "Área",
+    "seniority": "Senioridade"
   },
   "ProfileForm": {
     "title": "Editar perfil",
@@ -139,7 +162,10 @@
       "invalidTechnologies": "Estas tecnologias não são válidas: {detail}. Use apenas letras, números e _.",
       "invalid": "Confira os campos e tente de novo.",
       "unknown": "Algo deu errado. Tente de novo."
-    }
+    },
+    "area": "Área",
+    "seniority": "Senioridade",
+    "notSaying": "Prefiro não informar"
   },
   "Welcome": {
     "title": "Boas-vindas, {name}!",
@@ -191,7 +217,8 @@
   "Tag": {
     "noPosts": "Nenhum post com esta tag ainda.",
     "followLabel": "Seguir #{tag}",
-    "followersCount": "{count, plural, =0 {Ninguém segue esta tag ainda} one {# pessoa segue esta tag} other {# pessoas seguem esta tag}}"
+    "followersCount": "{count, plural, =0 {Ninguém segue esta tag ainda} one {# pessoa segue esta tag} other {# pessoas seguem esta tag}}",
+    "directoryLink": "Ver devs que usam #{tag}"
   },
   "Follow": {
     "follow": "Seguir",
@@ -244,7 +271,8 @@
     "filteringBy": "Filtrando por <tag></tag>",
     "clearFilter": "Ver todas",
     "empty": "Nenhum post neste período ainda.",
-    "more": "Ver mais"
+    "more": "Ver mais",
+    "directoryLink": "Procurando pessoas? Use o <link>diretório</link>."
   },
   "Search": {
     "label": "Buscar",
@@ -264,5 +292,21 @@
     "tagPosts": "{count, plural, =0 {sem posts} one {# post} other {# posts}}",
     "more": "Ver mais",
     "headerPlaceholder": "Buscar…"
+  },
+  "Directory": {
+    "title": "Diretório",
+    "subtitle": "Encontre devs pela stack, área, senioridade e local.",
+    "tech": "Tecnologia",
+    "techPlaceholder": "rust",
+    "area": "Área",
+    "seniority": "Senioridade",
+    "location": "Local",
+    "locationPlaceholder": "Curitiba",
+    "any": "Qualquer",
+    "submit": "Filtrar",
+    "clear": "Limpar filtros",
+    "empty": "Ninguém encontrado com esses filtros.",
+    "more": "Ver mais",
+    "followers": "{count, plural, =0 {sem seguidores} one {# seguidor} other {# seguidores}}"
   }
 }

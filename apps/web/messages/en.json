@@ -119,7 +119,30 @@
     "noPosts": "No posts yet.",
     "followLabel": "Follow @{username}",
     "followingCount": "<strong>{count, number}</strong> following",
-    "followersCount": "<strong>{count, number}</strong> {count, plural, one {follower} other {followers}}"
+    "followersCount": "<strong>{count, number}</strong> {count, plural, one {follower} other {followers}}",
+    "areas": {
+      "frontend": "Front-end",
+      "backend": "Back-end",
+      "fullstack": "Full-stack",
+      "mobile": "Mobile",
+      "data": "Data",
+      "ai": "AI and machine learning",
+      "devops": "DevOps and infrastructure",
+      "security": "Security",
+      "qa": "Quality (QA)",
+      "games": "Games",
+      "embedded": "Embedded",
+      "other": "Other area"
+    },
+    "seniorities": {
+      "student": "Student",
+      "junior": "Junior",
+      "mid": "Mid-level",
+      "senior": "Senior",
+      "staff": "Staff, principal or tech lead"
+    },
+    "area": "Area",
+    "seniority": "Seniority"
   },
   "ProfileForm": {
     "title": "Edit profile",
@@ -139,7 +162,10 @@
       "invalidTechnologies": "These technologies are not valid: {detail}. Use only letters, numbers and _.",
       "invalid": "Check the fields and try again.",
       "unknown": "Something went wrong. Try again."
-    }
+    },
+    "area": "Area",
+    "seniority": "Seniority",
+    "notSaying": "Rather not say"
   },
   "Welcome": {
     "title": "Welcome, {name}!",
@@ -191,7 +217,8 @@
   "Tag": {
     "noPosts": "No posts with this tag yet.",
     "followLabel": "Follow #{tag}",
-    "followersCount": "{count, plural, =0 {Nobody follows this tag yet} one {# person follows this tag} other {# people follow this tag}}"
+    "followersCount": "{count, plural, =0 {Nobody follows this tag yet} one {# person follows this tag} other {# people follow this tag}}",
+    "directoryLink": "See developers who use #{tag}"
   },
   "Follow": {
     "follow": "Follow",
@@ -244,7 +271,8 @@
     "filteringBy": "Filtering by <tag></tag>",
     "clearFilter": "Show all",
     "empty": "No posts in this period yet.",
-    "more": "Show more"
+    "more": "Show more",
+    "directoryLink": "Looking for people? Try the <link>directory</link>."
   },
   "Search": {
     "label": "Search",
@@ -264,5 +292,21 @@
     "tagPosts": "{count, plural, =0 {no posts} one {# post} other {# posts}}",
     "more": "Show more",
     "headerPlaceholder": "Search…"
+  },
+  "Directory": {
+    "title": "Directory",
+    "subtitle": "Find developers by stack, area, seniority and location.",
+    "tech": "Technology",
+    "techPlaceholder": "rust",
+    "area": "Area",
+    "seniority": "Seniority",
+    "location": "Location",
+    "locationPlaceholder": "Lisbon",
+    "any": "Any",
+    "submit": "Filter",
+    "clear": "Clear filters",
+    "empty": "Nobody matches these filters.",
+    "more": "Show more",
+    "followers": "{count, plural, =0 {no followers} one {# follower} other {# followers}}"
   }
 }

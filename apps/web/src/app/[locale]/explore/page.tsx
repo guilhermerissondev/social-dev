@@ -55,6 +55,15 @@ export default async function ExplorePage({ searchParams }: PageProps<'/[locale]
     <div className="mx-auto max-w-2xl px-6 py-12">
       <h1 className="text-2xl font-bold tracking-tight">{t('title')}</h1>
       <p className="mt-2 text-sm text-zinc-400">{t('subtitle')}</p>
+      <p className="mt-1 text-sm text-zinc-400">
+        {t.rich('directoryLink', {
+          link: (chunks) => (
+            <Link href="/directory" className="text-emerald-400 hover:underline">
+              {chunks}
+            </Link>
+          ),
+        })}
+      </p>
 
       <nav aria-label={t('periodLabel')} className="mt-6 flex gap-2">
         {explorePeriods.map((option) => (

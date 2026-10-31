@@ -1,5 +1,5 @@
 import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi';
-import { updateProfileSchema, usernameSchema } from '@social-dev/shared';
+import { AREAS, SENIORITIES, updateProfileSchema, usernameSchema } from '@social-dev/shared';
 
 import type { Context } from 'hono';
 
@@ -17,6 +17,8 @@ const ProfileSchema = z
     displayName: z.string(),
     bio: z.string(),
     location: z.string(),
+    area: z.enum(AREAS).nullable(),
+    seniority: z.enum(SENIORITIES).nullable(),
     links: z.array(z.object({ label: z.string(), url: z.string() })),
     technologies: z.array(z.string()),
     avatarUrl: z.string().nullable(),

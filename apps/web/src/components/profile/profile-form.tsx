@@ -1,7 +1,7 @@
 'use client';
 
-import { normalizeTag, PROFILE_LIMITS } from '@social-dev/shared';
-import { Alert, Button, Field, TextareaField } from '@social-dev/ui';
+import { AREAS, normalizeTag, PROFILE_LIMITS, SENIORITIES } from '@social-dev/shared';
+import { Alert, Button, Field, SelectField, TextareaField } from '@social-dev/ui';
 import { useTranslations } from 'next-intl';
 import { useState, type SubmitEvent } from 'react';
 
@@ -25,6 +25,7 @@ function parseTechnologies(value: string) {
 
 export function ProfileForm({ profile }: { profile: Profile }) {
   const t = useTranslations('ProfileForm');
+  const tProfile = useTranslations('Profile');
   const hydrated = useHydrated();
   const router = useRouter();
   const [error, setError] = useState<{ type: FormError; detail?: string } | null>(null);
@@ -58,6 +59,9 @@ export function ProfileForm({ profile }: { profile: Profile }) {
         displayName: formText(form, 'displayName'),
         bio: formText(form, 'bio'),
         location: formText(form, 'location'),
+        // An empty choice means "rather not say".
+        area: formText(form, 'area') || null,
+        seniority: formText(form, 'seniority') || null,
         // A link without a label shows its address.
         links: links.map((link) => ({ ...link, label: link.label || t('linkDefaultLabel') })),
         technologies,
@@ -99,6 +103,24 @@ export function ProfileForm({ profile }: { profile: Profile }) {
         defaultValue={profile.location}
         maxLength={PROFILE_LIMITS.location}
       />
+      <div className="grid grid-cols-2 gap-3">
+        <SelectField label={t('area')} name="area" defaultValue={profile.area ?? ''}>
+          <option value="">{t('notSaying')}</option>
+          {AREAS.map((area) => (
+            <option key={area} value={area}>
+              {tProfile(`areas.${area}`)}
+            </option>
+          ))}
+        </SelectField>
+        <SelectField label={t('seniority')} name="seniority" defaultValue={profile.seniority ?? ''}>
+          <option value="">{t('notSaying')}</option>
+          {SENIORITIES.map((seniority) => (
+            <option key={seniority} value={seniority}>
+              {tProfile(`seniorities.${seniority}`)}
+            </option>
+          ))}
+        </SelectField>
+      </div>
       <Field
         label={t('technologies')}
         hint={t('technologiesHint', { max: PROFILE_LIMITS.technologies })}

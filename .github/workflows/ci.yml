@@ -37,6 +37,53 @@ jobs:
       # Integration tests start PostgreSQL through Testcontainers (Docker is available on GitHub runners).
       - run: pnpm test
 
+  e2e:
+    name: End-to-end tests
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_USER: socialdev
+          POSTGRES_PASSWORD: socialdev
+          POSTGRES_DB: socialdev
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U socialdev -d socialdev"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+      mailpit:
+        image: axllent/mailpit:latest
+        ports: ['1025:1025', '8025:8025']
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: pnpm/action-setup@v6
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Configure environment
+        run: |
+          cp .env.example .env
+          sed -i "s|^BETTER_AUTH_SECRET=.*|BETTER_AUTH_SECRET=$(openssl rand -base64 32)|" .env
+
+      - run: pnpm db:migrate
+
+      - run: pnpm --filter @social-dev/web exec playwright install --with-deps chromium
+
+      - run: pnpm --filter @social-dev/web test:e2e
+
+      - uses: actions/upload-artifact@v7
+        if: failure()
+        with:
+          name: playwright-report
+          path: apps/web/playwright-report/
+          retention-days: 7
+
   secrets:
     name: Secret scanning
     runs-on: ubuntu-latest

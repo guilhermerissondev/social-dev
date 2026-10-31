@@ -18,7 +18,9 @@
     "format:check": "prettier --check .",
     "prepare": "husky",
     "services:up": "docker compose -f infra/docker-compose.yml up -d --wait",
-    "services:down": "docker compose -f infra/docker-compose.yml down"
+    "services:down": "docker compose -f infra/docker-compose.yml down",
+    "db:migrate": "pnpm --filter @social-dev/db db:migrate",
+    "db:generate": "pnpm --filter @social-dev/db db:generate"
   },
   "devDependencies": {
     "@commitlint/cli": "^21.2.4",

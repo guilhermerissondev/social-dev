@@ -32,7 +32,8 @@
     }
   },
   "Footer": {
-    "openSource": "Projeto de código aberto sob a licença GPL-3.0."
+    "openSource": "Projeto de código aberto sob a licença AGPL-3.0.",
+    "sourceCode": "Código-fonte"
   },
   "Auth": {
     "or": "ou",

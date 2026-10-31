@@ -2,7 +2,7 @@
   "name": "social-dev",
   "private": true,
   "description": "A federated social network for the developer community",
-  "license": "GPL-3.0-only",
+  "license": "AGPL-3.0-only",
   "type": "module",
   "packageManager": "pnpm@12.16.1",
   "engines": {

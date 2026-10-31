@@ -56,4 +56,5 @@ Stack, estrutura do repositório e lista de comandos estão no [README em inglê
 
 ## Licença
 
-[GPL-3.0](LICENSE)
+[AGPL-3.0](LICENSE). Quem rodar uma versão modificada da Social Dev como serviço na internet precisa
+disponibilizar o código-fonte para os usuários.

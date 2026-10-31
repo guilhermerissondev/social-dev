@@ -1,7 +1,7 @@
 # Social Dev
 
-[![CI](https://github.com/OWNER/social-dev/actions/workflows/ci.yml/badge.svg)](https://github.com/OWNER/social-dev/actions/workflows/ci.yml)
-[![License: GPL-3.0](https://img.shields.io/badge/license-GPL--3.0-blue.svg)](LICENSE)
+[![CI](https://github.com/guilhermerissondev/social-dev/actions/workflows/ci.yml/badge.svg)](https://github.com/guilhermerissondev/social-dev/actions/workflows/ci.yml)
+[![License: AGPL-3.0](https://img.shields.io/badge/license-AGPL--3.0-blue.svg)](LICENSE)
 
 **A federated social network for the developer community.** Launching first in Brazil.
 
@@ -103,4 +103,5 @@ To report a security problem, see [SECURITY.md](SECURITY.md).
 
 ## License
 
-[GPL-3.0](LICENSE)
+[AGPL-3.0](LICENSE). If you run a modified version of Social Dev as a network service, you must make your
+source code available to its users.

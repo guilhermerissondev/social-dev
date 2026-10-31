@@ -12,7 +12,8 @@ O código da Social Dev será aberto desde o início. Além do produto, o projet
 - Repositório público no GitHub.
 - O histórico do repositório faz parte do portfólio: PRs pequenos e descritivos, Conventional Commits, CI visível, ADRs publicados.
 - Arquivos obrigatórios: `README`, `LICENSE`, `SECURITY.md` (como reportar vulnerabilidades), `.env.example`.
-- **Licença:** GPL-3.0. Quem distribuir o software, modificado ou não, precisa manter a mesma licença e disponibilizar o código. (Diferente da AGPL-3.0, a GPL-3.0 não obriga a publicar o código de versões modificadas que apenas rodam como serviço na web.)
+- **Licença:** AGPL-3.0 (inicialmente GPL-3.0, trocada em 2026-10-31). Além das regras da GPL-3.0, quem rodar uma versão modificada como serviço na internet precisa oferecer o código-fonte aos usuários. É a licença usada por Mastodon, Misskey e outros projetos do fediverso, e impede que alguém feche o código e lance uma rede concorrente com ele.
+- A própria Social Dev cumpre a seção 13 da AGPL com um link para o código-fonte no rodapé do site.
 - **Idioma:** código, commits, issues e PRs em inglês. README em inglês com versão em português (`README.pt-BR.md`). Documentação de produto e ADRs em português.
 
 ## Consequências

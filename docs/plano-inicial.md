@@ -16,7 +16,7 @@
 | 4   | Federação         | Rede federada (ActivityPub). Modelo de dados preparado desde o início, federação ativada no M5. Domínio decidido só antes do M5. | [0002](adr/0002-federacao-activitypub.md)       |
 | 5   | Infraestrutura    | Por enquanto roda apenas localmente. Hospedagem será decidida perto do MVP.                                                      | [0004](adr/0004-desenvolvimento-local-first.md) |
 | 6   | Stack             | TypeScript ponta a ponta (Next.js + Hono + Fedify + PostgreSQL).                                                                 | [0001](adr/0001-stack-typescript.md)            |
-| 7   | Repositório       | Público, licença GPL-3.0, também como projeto de portfólio. Código e commits em inglês, docs de produto em português.            | [0005](adr/0005-repositorio-publico.md)         |
+| 7   | Repositório       | Público, licença AGPL-3.0, também como projeto de portfólio. Código e commits em inglês, docs de produto em português.           | [0005](adr/0005-repositorio-publico.md)         |
 | 8   | Cadastro          | Aberto a qualquer pessoa: login com GitHub, GitLab ou e-mail e senha.                                                            | [0006](adr/0006-autenticacao-e-cadastro.md)     |
 
 ---
@@ -348,11 +348,11 @@ social-dev/
 - [x] Federação: abordagem definida, domínio adiado para antes do M5
 - [x] Infraestrutura local
 - [x] Repositório público
-- [x] Licença: GPL-3.0
+- [x] Licença: AGPL-3.0
 - [x] Idioma: código e commits em inglês, docs de produto em português
 - [x] Branch `master` renomeada para `main`
 - [x] README, LICENSE, `.gitignore`, `SECURITY.md`
-- [ ] Publicar no GitHub (e trocar `OWNER` no badge do README)
+- [x] Publicado em https://github.com/guilhermerissondev/social-dev
 
 ### 10.2 M1: entregue
 

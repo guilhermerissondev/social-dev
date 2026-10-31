@@ -10,7 +10,7 @@ Cada decisão de arquitetura relevante vira um arquivo curto e numerado aqui.
 | [0002](0002-federacao-activitypub.md)       | Federação via ActivityPub                 | Aceito |
 | [0003](0003-modelo-de-conteudo.md)          | Modelo de conteúdo livre                  | Aceito |
 | [0004](0004-desenvolvimento-local-first.md) | Desenvolvimento apenas local por enquanto | Aceito |
-| [0005](0005-repositorio-publico.md)         | Repositório público, GPL-3.0              | Aceito |
+| [0005](0005-repositorio-publico.md)         | Repositório público, AGPL-3.0             | Aceito |
 | [0006](0006-autenticacao-e-cadastro.md)     | Autenticação e cadastro aberto            | Aceito |
 
 ## Modelo

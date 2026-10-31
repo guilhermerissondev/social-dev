@@ -1,3 +1,4 @@
+import { sql, type SQL } from 'drizzle-orm';
 import {
   index,
   pgTable,
@@ -9,7 +10,7 @@ import {
 } from 'drizzle-orm/pg-core';
 
 import { actors } from './actors.ts';
-import { id, timestamps } from './columns.ts';
+import { id, timestamps, tsvector } from './columns.ts';
 import { tags } from './tags.ts';
 
 /**
@@ -40,10 +41,19 @@ export const posts = pgTable(
      * key on purpose: replies outlive a deleted conversation start, like on the fediverse.
      */
     threadId: uuid(),
+    /**
+     * Search document: title weighted above content, in the accent-insensitive Portuguese
+     * configuration created by migration 0009.
+     */
+    search: tsvector().generatedAlwaysAs(
+      (): SQL =>
+        sql`setweight(to_tsvector('social_dev', coalesce(${posts.title}, '')), 'A') || setweight(to_tsvector('social_dev', ${posts.content}), 'B')`,
+    ),
     ...timestamps,
   },
   (table) => [
     index().on(table.authorId, table.id.desc()),
+    index().using('gin', table.search),
     // Loads a whole conversation and counts its replies.
     index().on(table.threadId, table.id),
   ],

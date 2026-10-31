@@ -2,6 +2,7 @@ import { schema, type Database } from '@social-dev/db';
 import { and, count, desc, eq, lt, or, sql } from '@social-dev/db/orm';
 
 import { decodeCursor, encodeCursor } from '../../lib/cursor.ts';
+import { notify, retract } from '../notifications/service.ts';
 import { findLocalActorId } from '../profiles/service.ts';
 import { upsertTags } from '../tags/service.ts';
 
@@ -21,7 +22,10 @@ export async function followActor(
   if (!followeeId) return 'not_found';
   if (followeeId === followerId) return 'self';
 
-  await db.insert(follows).values({ followerId, followeeId }).onConflictDoNothing();
+  await db.transaction(async (tx) => {
+    await tx.insert(follows).values({ followerId, followeeId }).onConflictDoNothing();
+    await notify(tx, { recipientId: followeeId, actorId: followerId, type: 'follow' });
+  });
   return 'ok';
 }
 
@@ -33,9 +37,12 @@ export async function unfollowActor(
   const followeeId = await findLocalActorId(db, username);
   if (!followeeId) return 'not_found';
 
-  await db
-    .delete(follows)
-    .where(and(eq(follows.followerId, followerId), eq(follows.followeeId, followeeId)));
+  await db.transaction(async (tx) => {
+    await tx
+      .delete(follows)
+      .where(and(eq(follows.followerId, followerId), eq(follows.followeeId, followeeId)));
+    await retract(tx, { recipientId: followeeId, actorId: followerId, type: 'follow' });
+  });
   return 'ok';
 }
 

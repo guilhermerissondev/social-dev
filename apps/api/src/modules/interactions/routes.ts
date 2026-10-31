@@ -6,7 +6,7 @@ import { requireSession } from '../../auth/session.ts';
 import { AppError } from '../../errors.ts';
 import { PostPageSchema } from '../posts/schemas.ts';
 import { listBookmarkedPosts } from '../posts/service.ts';
-import { addInteraction, interactionTables, removeInteraction } from './service.ts';
+import { addInteraction, removeInteraction, type InteractionKind } from './service.ts';
 
 const responses = {
   204: { description: 'Done. Repeating the request is not an error.' },
@@ -17,11 +17,7 @@ const responses = {
 
 const PostParams = z.object({ id: z.uuid() });
 
-function interactionRoute(
-  kind: keyof typeof interactionTables,
-  method: 'post' | 'delete',
-  summary: string,
-) {
+function interactionRoute(kind: InteractionKind, method: 'post' | 'delete', summary: string) {
   return createRoute({
     method,
     path: `/api/posts/{id}/${kind}`,
@@ -53,13 +49,12 @@ const bookmarksRoute = createRoute({
 const app = new OpenAPIHono<AppEnv>();
 
 for (const kind of ['like', 'bookmark'] as const) {
-  const table = interactionTables[kind];
   const noun = kind === 'like' ? 'Like' : 'Save';
 
   app.openapi(interactionRoute(kind, 'post', `${noun} a post`), async (c) => {
     const result = await addInteraction(
       c.var.deps.db,
-      table,
+      kind,
       await requireActorId(c),
       c.req.valid('param').id,
     );
@@ -69,7 +64,7 @@ for (const kind of ['like', 'bookmark'] as const) {
   app.openapi(interactionRoute(kind, 'delete', `Undo: ${noun.toLowerCase()} a post`), async (c) => {
     const result = await removeInteraction(
       c.var.deps.db,
-      table,
+      kind,
       await requireActorId(c),
       c.req.valid('param').id,
     );

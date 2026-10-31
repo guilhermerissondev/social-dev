@@ -64,6 +64,20 @@
       "when": 1793462859316,
       "tag": "0008_mentions",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1793464062242,
+      "tag": "0009_search_setup",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1793464075830,
+      "tag": "0010_search",
+      "breakpoints": true
     }
   ]
 }

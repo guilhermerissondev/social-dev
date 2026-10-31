@@ -9,11 +9,13 @@ import { useRouter } from '@/i18n/navigation.ts';
 import { apiErrorCode } from '@/lib/api-errors.ts';
 import { authClient } from '@/lib/auth-client.ts';
 import { formText } from '@/lib/form.ts';
+import { useHydrated } from '@/lib/use-hydrated.ts';
 
 type FormError = 'taken' | 'invalid' | 'unknown';
 
 export function UsernameForm() {
   const t = useTranslations('Welcome');
+  const hydrated = useHydrated();
   const router = useRouter();
   const { refetch } = authClient.useSession();
   const [error, setError] = useState<FormError | null>(null);
@@ -58,7 +60,7 @@ export function UsernameForm() {
         maxLength={USERNAME_MAX_LENGTH}
         pattern="[A-Za-z0-9_]+"
       />
-      <Button type="submit" disabled={pending}>
+      <Button type="submit" disabled={pending || !hydrated}>
         {t('submit')}
       </Button>
     </form>

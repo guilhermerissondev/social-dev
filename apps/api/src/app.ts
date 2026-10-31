@@ -13,6 +13,7 @@ import { interactionRoutes } from './modules/interactions/routes.ts';
 import { notificationRoutes } from './modules/notifications/routes.ts';
 import { postRoutes } from './modules/posts/routes.ts';
 import { profileRoutes } from './modules/profiles/routes.ts';
+import { searchRoutes } from './modules/search/routes.ts';
 import { socialGraphRoutes } from './modules/social-graph/routes.ts';
 import { authProvidersRoutes } from './routes/auth-providers.ts';
 import { healthRoutes } from './routes/health.ts';
@@ -83,6 +84,7 @@ export function createApp(deps: AppDeps) {
   app.route('/', interactionRoutes);
   app.route('/', notificationRoutes);
   app.route('/', exploreRoutes);
+  app.route('/', searchRoutes);
 
   app.doc31('/openapi.json', {
     openapi: '3.1.0',

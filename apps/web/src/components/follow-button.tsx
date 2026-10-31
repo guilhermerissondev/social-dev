@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 
 import { Link, useRouter } from '@/i18n/navigation.ts';
+import { useHydrated } from '@/lib/use-hydrated.ts';
 
 export interface FollowButtonProps {
   /** API path that accepts POST (follow) and DELETE (unfollow). */
@@ -18,6 +19,7 @@ export interface FollowButtonProps {
 
 export function FollowButton({ apiPath, following, fallbackHref, label }: FollowButtonProps) {
   const t = useTranslations('Follow');
+  const hydrated = useHydrated();
   const router = useRouter();
   const [isFollowing, setIsFollowing] = useState(following);
   const [pending, setPending] = useState(false);
@@ -50,7 +52,7 @@ export function FollowButton({ apiPath, following, fallbackHref, label }: Follow
       variant={isFollowing ? 'secondary' : 'primary'}
       aria-pressed={isFollowing}
       aria-label={label}
-      disabled={pending}
+      disabled={pending || !hydrated}
       onClick={() => void toggle()}
       className="group min-w-28"
     >

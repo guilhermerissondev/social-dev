@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 
 import { useRouter } from '@/i18n/navigation.ts';
+import { useHydrated } from '@/lib/use-hydrated.ts';
 
 export function DeletePostButton({
   postId,
@@ -14,6 +15,7 @@ export function DeletePostButton({
   authorUsername: string;
 }) {
   const t = useTranslations('Post');
+  const hydrated = useHydrated();
   const router = useRouter();
   const [pending, setPending] = useState(false);
 
@@ -31,7 +33,7 @@ export function DeletePostButton({
   }
 
   return (
-    <Button variant="secondary" disabled={pending} onClick={() => void onClick()}>
+    <Button variant="secondary" disabled={pending || !hydrated} onClick={() => void onClick()}>
       {t('delete')}
     </Button>
   );

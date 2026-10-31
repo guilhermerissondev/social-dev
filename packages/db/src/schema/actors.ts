@@ -1,5 +1,5 @@
 import { sql } from 'drizzle-orm';
-import { check, jsonb, pgTable, text, uniqueIndex, uuid } from 'drizzle-orm/pg-core';
+import { check, index, jsonb, pgTable, text, uniqueIndex, uuid } from 'drizzle-orm/pg-core';
 
 import { id, timestamps } from './columns.ts';
 import { users } from './identity.ts';
@@ -39,5 +39,11 @@ export const actors = pgTable(
       .on(sql`lower(${table.username})`, table.domain)
       .where(sql`${table.domain} is not null`),
     check('actors_local_or_remote', sql`(${table.domain} is null) = (${table.userId} is not null)`),
+    // People search matches parts of usernames and names (trigrams), ignoring case.
+    index('actors_username_trgm_index').using('gin', sql`lower(${table.username}) gin_trgm_ops`),
+    index('actors_display_name_trgm_index').using(
+      'gin',
+      sql`lower(${table.displayName}) gin_trgm_ops`,
+    ),
   ],
 );

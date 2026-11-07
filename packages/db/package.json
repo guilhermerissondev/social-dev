@@ -21,7 +21,7 @@
   "dependencies": {
     "@social-dev/shared": "workspace:*",
     "drizzle-orm": "^0.45.4",
-    "postgres": "^3.4.9"
+    "postgres": "^4.0.0"
   },
   "devDependencies": {
     "@testcontainers/postgresql": "^12.2.1",
